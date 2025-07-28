@@ -1,0 +1,4157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kynay OS Supreme Edition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.rings.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.fog.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"></script>
+    <style>
+        /* CSS Reset & Global Style */
+        :root {
+            --taskbar-height: 48px;
+            --start-menu-width: 600px;
+            --start-menu-height: 650px;
+            --control-center-width: 380px;
+            --accent-color-primary: #0078d4;
+            --accent-color-secondary: #4a90e2;
+            --accent-color-tertiary: #9b59b6;
+            --font-color-light: #ffffff;
+            --font-color-dark: #1f1f1f;
+            --border-radius: 16px;
+            --shadow-light: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-heavy: 0 12px 40px rgba(0, 0, 0, 0.4);
+            --animation-speed: 0.3s;
+            --window-header-height: 42px;
+            --depth-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            --parallax-intensity: 0.05;
+
+            /* --- Base Theme (Dark) --- */
+            --bg-primary: rgba(30, 30, 30, 0.6);
+            --bg-secondary: rgba(45, 45, 45, 0.7);
+            --bg-tertiary: rgba(60, 60, 60, 0.8);
+            --border-color: rgba(255, 255, 255, 0.15);
+            --font-color: var(--font-color-light);
+            --icon-color: var(--font-color-light);
+            --icon-hover-bg: rgba(255, 255, 255, 0.1);
+            --item-hover-bg: rgba(255, 255, 255, 0.08);
+            --active-indicator: var(--accent-color-primary);
+            --window-header-bg: rgba(40, 40, 40, 0.8);
+            --context-menu-bg: rgba(50, 50, 50, 0.95);
+            --glass-bg: rgba(30, 30, 30, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --widget-bg: rgba(40, 40, 40, 0.5);
+        }
+
+        body.light-mode {
+            /* --- Light Theme Variables --- */
+            --bg-primary: rgba(242, 242, 242, 0.65);
+            --bg-secondary: rgba(255, 255, 255, 0.75);
+            --bg-tertiary: rgba(230, 230, 230, 0.85);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --font-color: var(--font-color-dark);
+            --icon-color: #444444;
+            --icon-hover-bg: rgba(0, 0, 0, 0.08);
+            --item-hover-bg: rgba(0, 0, 0, 0.05);
+            --active-indicator: var(--accent-color-secondary);
+            --window-header-bg: rgba(240, 240, 240, 0.8);
+            --context-menu-bg: rgba(255, 255, 255, 0.95);
+            --glass-bg: rgba(255, 255, 255, 0.3);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --widget-bg: rgba(255, 255, 255, 0.5);
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box; user-select: none;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', sans-serif;
+            touch-action: manipulation;
+        }
+
+        html, body {
+            height: 100%; width: 100%; overflow: hidden;
+            color: var(--font-color); background-color: #000;
+        }
+
+        /* --- Enhanced Boot Screen --- */
+        #boot-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0d1117 0%, #1a2c4a 100%); 
+            z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1.5s ease-out, visibility 1.5s ease-out;
+            visibility: visible; opacity: 1;
+        }
+        .boot-container { 
+            text-align: center; 
+            animation: fadeIn 2s ease-in-out; 
+        }
+        .boot-logo {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 25px;
+            perspective: 1000px;
+        }
+        .bolt-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: rotateBolt 8s infinite linear;
+        }
+        .bolt-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backface-visibility: hidden;
+            font-size: 160px;
+            color: #4a90e2;
+            text-shadow: 0 0 15px #4a90e2, 0 0 30px #4a90e2;
+        }
+        .bolt-face:nth-child(1) { transform: rotateY(0deg); }
+        .bolt-face:nth-child(2) { transform: rotateY(90deg); }
+        .bolt-face:nth-child(3) { transform: rotateY(180deg); }
+        .bolt-face:nth-child(4) { transform: rotateY(270deg); }
+        .bolt-face:nth-child(5) { transform: rotateX(90deg); }
+        .bolt-face:nth-child(6) { transform: rotateX(270deg); }
+        @keyframes rotateBolt {
+            0% { transform: rotateY(0deg) rotateX(0deg); }
+            100% { transform: rotateY(360deg) rotateX(360deg); }
+        }
+        #boot-screen h1 { 
+            font-weight: 700; font-size: 3.5em; 
+            letter-spacing: 2px; color: #fff; 
+            margin-bottom: 8px; 
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.7);
+            background: linear-gradient(45deg, #0078d4, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulseText 3s infinite ease-in-out;
+        }
+        @keyframes pulseText {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        #boot-screen p { font-weight: 300; font-size: 1.2em; color: #ccc; }
+        #boot-screen .creator-name { 
+            font-weight: 500; color: #fff; margin-top: 4px;
+            font-size: 1.4em;
+        }
+        .boot-progress {
+            width: 400px; height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-top: 30px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .boot-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4a90e2, #0078d4, #9b59b6);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 15px rgba(74, 144, 226, 0.5);
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* --- Login Screen --- */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0d1117 0%, #1a2c4a 100%); 
+            z-index: 20000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        #login-screen.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .login-container {
+            background: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 20px;
+            min-width: 380px;
+            max-width: 90vw;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            transform: translateY(50px);
+            transition: transform 0.5s ease;
+        }
+        #login-screen.show .login-container {
+            transform: translateY(0);
+        }
+        .login-logo {
+            font-size: 64px;
+            color: #4a90e2;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(74, 144, 226, 0.7);
+            animation: pulseBolt 2.5s infinite ease-in-out; 
+        }
+        @keyframes pulseBolt { 
+            0%, 100% { transform: scale(1); opacity: 1; } 
+            50% { transform: scale(1.1); opacity: 0.8; } 
+        }
+        .login-title {
+            font-size: 2em;
+            margin-bottom: 30px;
+            font-weight: 600;
+            background: linear-gradient(45deg, #0078d4, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .login-input {
+            width: 100%;
+            padding: 14px 18px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .login-input:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, #0078d4, #4a90e2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0, 120, 212, 0.3);
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+        .login-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20px;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(25deg);
+            transition: all 0.6s;
+        }
+        .login-btn:hover::after {
+            left: 120%;
+        }
+        .login-btn:hover {
+            background: linear-gradient(90deg, #0066b3, #3b78c3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 120, 212, 0.4);
+        }
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        .login-footer {
+            margin-top: 20px;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        
+        /* --- Desktop & Wallpaper --- */
+        #desktop { 
+            width: 100%; height: 100%; position: relative; overflow: hidden; 
+            display: flex;
+        }
+        .desktop-content {
+            flex: 1;
+            position: relative;
+        }
+        #desktop-icons { 
+            position: absolute; top: 20px; left: 20px; 
+            display: grid; grid-template-columns: 90px; 
+            grid-auto-rows: 90px; gap: 10px; 
+            z-index: 100;
+        }
+        .desktop-icon { 
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; gap: 8px; cursor: pointer; 
+            padding: 10px; border-radius: var(--border-radius); 
+            transition: all 0.3s ease; text-align: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-light);
+        }
+        .desktop-icon:hover { 
+            background: var(--item-hover-bg); 
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .desktop-icon i { font-size: 42px; }
+        .desktop-icon span { 
+            font-size: 13px; 
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5); 
+            color: var(--font-color-light);
+            font-weight: 500;
+        }
+        .desktop-icon:active { transform: scale(0.95); }
+
+        /* Desktop Widgets */
+        .desktop-widget {
+            position: absolute;
+            background: var(--widget-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+            padding: 15px;
+            z-index: 50;
+            transition: transform 0.3s ease;
+        }
+        .desktop-widget:hover {
+            transform: translateY(-3px);
+        }
+        .widget-clock {
+            top: 20px;
+            right: 20px;
+            width: 200px;
+            height: 120px;
+        }
+        .widget-weather {
+            top: 160px;
+            right: 20px;
+            width: 200px;
+            height: 150px;
+        }
+        .widget-notes {
+            bottom: 20px;
+            left: 20px;
+            width: 250px;
+            height: 200px;
+        }
+        .widget-music {
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 120px;
+        }
+        .widget-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--accent-color-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .clock-time {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        .clock-date {
+            text-align: center;
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+        .weather-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .weather-icon {
+            font-size: 3em;
+            color: #f1c40f;
+        }
+        .weather-details {
+            flex: 1;
+        }
+        .weather-temp {
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+        .weather-desc {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        .notes-content {
+            height: calc(100% - 30px);
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--font-color);
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .music-info {
+            flex: 1;
+            overflow: hidden;
+        }
+        .music-title {
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .music-artist {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        .music-progress {
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .music-progress-bar {
+            height: 100%;
+            width: 45%;
+            background: var(--accent-color-primary);
+            border-radius: 2px;
+        }
+        .music-btn {
+            background: none;
+            border: none;
+            color: var(--icon-color);
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .music-btn:hover {
+            color: var(--accent-color-primary);
+            transform: scale(1.1);
+        }
+        
+        /* --- Floating Taskbar --- */
+        #taskbar {
+            position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
+            width: auto; height: var(--taskbar-height); background: var(--bg-primary);
+            backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid var(--border-color); z-index: 5000;
+            display: flex; align-items: center; padding: 0 8px; border-radius: 16px; box-shadow: var(--shadow-heavy);
+            max-width: 95vw;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+        }
+        #taskbar::-webkit-scrollbar {
+            display: none;
+        }
+        #start-button {
+            width: 48px; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 24px;
+            cursor: pointer; border-radius: var(--border-radius); color: var(--accent-color-secondary); transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        #start-button:hover { 
+            background-color: var(--icon-hover-bg); 
+            transform: scale(1.1); 
+        }
+        #taskbar-apps { 
+            display: flex; height: 100%; align-items: center; gap: 5px; margin: 0 10px; 
+            flex-shrink: 0; 
+        }
+        .taskbar-app-icon { 
+            font-size: 22px; padding: 8px; border-radius: 8px; cursor: pointer; 
+            color: var(--icon-color); transition: all 0.3s ease; position: relative; 
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+        }
+        .taskbar-app-icon.active { 
+            background: rgba(255,255,255,0.15);
+            color: var(--accent-color-primary);
+        }
+        .taskbar-app-icon.active::after { 
+            content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); 
+            width: 6px; height: 6px; background-color: var(--active-indicator); 
+            border-radius: 50%; 
+        }
+        .taskbar-app-icon:not(.active):hover { 
+            background-color: var(--icon-hover-bg); 
+            transform: translateY(-2px);
+        }
+        #system-tray { 
+            display: flex; align-items: center; height: 100%; padding: 0 5px; gap: 5px; 
+            border-left: 1px solid var(--border-color); margin-left: 5px; flex-shrink: 0; 
+        }
+        .system-tray-icon { 
+            font-size: 18px; color: var(--icon-color); padding: 8px; border-radius: 8px; 
+            cursor: pointer; transition: all 0.2s ease; 
+        }
+        .system-tray-icon:hover { 
+            background-color: var(--icon-hover-bg); 
+            transform: scale(1.1); 
+        }
+        #clock { 
+            font-size: 13px; text-align: right; padding: 0 10px; cursor: default; min-width: 90px; 
+            font-weight: 500;
+        }
+        
+        /* --- Workspace Switcher --- */
+        #workspace-switcher {
+            display: flex; align-items: center; gap: 5px; margin-left: 10px;
+            flex-shrink: 0;
+        }
+        .workspace-btn {
+            width: 32px; height: 32px;
+            display: flex; justify-content: center; align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: var(--font-color);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+        .workspace-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .workspace-btn.active {
+            background: var(--accent-color-primary);
+            color: white;
+        }
+        
+        /* --- Upgraded Start Menu --- */
+        #start-menu {
+            position: fixed; bottom: calc(var(--taskbar-height) + 20px); left: 50%; transform: translateX(-50%) translateY(30px) scale(0.95);
+            width: var(--start-menu-width); height: var(--start-menu-height); background: var(--bg-secondary);
+            backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--border-color); border-radius: var(--border-radius); box-shadow: var(--shadow-heavy); z-index: 4999;
+            visibility: hidden; opacity: 0; transform-origin: bottom center;
+            transition: opacity var(--animation-speed) ease, transform var(--animation-speed) ease, visibility var(--animation-speed);
+            display: flex; flex-direction: column;
+            max-width: 90vw;
+            max-height: 70vh;
+            overflow: hidden;
+        }
+        #start-menu.show { 
+            visibility: visible; opacity: 1; 
+            transform: translateX(-50%) translateY(0) scale(1.0); 
+        }
+        .start-menu-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .start-menu-search {
+            flex: 1;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--font-color);
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .start-menu-search:focus {
+            border-color: var(--accent-color-primary);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+        }
+        .start-menu-user {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--accent-color-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .start-menu-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .start-menu-sidebar {
+            width: 180px;
+            border-right: 1px solid var(--border-color);
+            padding: 15px;
+            overflow-y: auto;
+        }
+        .start-menu-category {
+            margin-bottom: 15px;
+        }
+        .start-menu-category h4 {
+            font-size: 0.9em;
+            color: var(--accent-color-primary);
+            margin-bottom: 10px;
+            padding-left: 5px;
+        }
+        .start-menu-category-item {
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        .start-menu-category-item:hover {
+            background: var(--item-hover-bg);
+        }
+        .start-menu-category-item.active {
+            background: var(--accent-color-primary);
+            color: white;
+        }
+        .start-menu-category-item i {
+            font-size: 18px;
+        }
+        .start-menu-apps {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .start-menu-apps h2 {
+            font-weight: 600; 
+            margin-bottom: 20px; 
+            font-size: 1.2em;
+            color: var(--accent-color-primary);
+        }
+        .start-menu-items { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+            gap: 20px; 
+        }
+        .start-menu-item { 
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; gap: 10px; padding: 15px; 
+            cursor: pointer; border-radius: var(--border-radius); 
+            transition: all 0.3s ease; 
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+        .start-menu-item:hover { 
+            background: var(--item-hover-bg); 
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .start-menu-item i { 
+            font-size: 32px; 
+            color: var(--accent-color-primary); 
+            width: 40px; 
+            text-align: center; 
+        }
+        .start-menu-item span {
+            font-weight: 500;
+        }
+        
+        /* --- Upgraded Window Styling (macOS style) --- */
+        .window {
+            position: absolute; background-color: var(--bg-primary); backdrop-filter: blur(25px) saturate(150%);
+            border: 1px solid var(--border-color); border-radius: var(--border-radius); box-shadow: var(--shadow-light);
+            min-width: 320px; min-height: 220px; display: flex; flex-direction: column; resize: both; overflow: hidden;
+            animation: openWindow var(--animation-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 100vw; max-height: calc(100vh - var(--taskbar-height) - 20px);
+            touch-action: none;
+            transform-origin: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            z-index: 100;
+        }
+        .window:hover {
+            box-shadow: var(--shadow-heavy);
+        }
+        .window.closing { animation: closeWindow var(--animation-speed) ease-in-out forwards; }
+        .window.minimized { animation: minimizeWindow var(--animation-speed) ease-in-out forwards; }
+        @keyframes openWindow { 
+            from { opacity: 0; transform: scale(0.9) translateY(20px); } 
+            to { opacity: 1; transform: scale(1) translateY(0); } 
+        }
+        @keyframes closeWindow { 
+            from { opacity: 1; transform: scale(1); } 
+            to { opacity: 0; transform: scale(0.95); } 
+        }
+        @keyframes minimizeWindow { 
+            to { 
+                opacity: 0; 
+                transform: translateY(100px) scale(0.2); 
+            } 
+        }
+        .window-header { 
+            height: var(--window-header-height); cursor: move; 
+            display: flex; align-items: center; padding: 0 5px 0 15px; 
+            flex-shrink: 0; 
+            border-bottom: 1px solid var(--border-color); 
+            background: var(--window-header-bg);
+            backdrop-filter: blur(10px);
+        }
+        .window-title { 
+            font-weight: 600; flex-grow: 1; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+            font-size: 0.95em;
+            padding-right: 10px;
+        }
+        .window-controls { display: flex; gap: 8px; margin-left: auto; }
+        .window-control { 
+            width: 16px; height: 16px; border-radius: 50%; 
+            cursor: pointer; transition: all 0.2s ease; 
+            border: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: transparent;
+        }
+        .window-control:hover { 
+            transform: scale(1.1); 
+            color: rgba(0,0,0,0.7);
+        }
+        #close-btn { background-color: #ff5f57; }
+        #minimize-btn { background-color: #ffbd2e; }
+        #maximize-btn { background-color: #28c940; }
+        .window-body { 
+            flex-grow: 1; overflow: auto; 
+            background-color: rgba(0,0,0,0.1); 
+        }
+        
+        /* --- Notification & Control Center --- */
+        #notification-container { 
+            position: fixed; top: 20px; right: 20px; z-index: 9999; 
+            display: flex; flex-direction: column; gap: 10px; max-width: 90vw; 
+        }
+        .notification { 
+            width: 350px; padding: 15px; background: var(--bg-tertiary); 
+            backdrop-filter: blur(20px) saturate(180%); border: 1px solid var(--border-color); 
+            border-radius: var(--border-radius); box-shadow: var(--shadow-light); 
+            animation: slideInNotification 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; 
+            opacity: 0; 
+            display: flex;
+            gap: 15px;
+        }
+        .notification-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .notification-content {
+            flex: 1;
+        }
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .notification-message {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .notification-btn {
+            padding: 5px 12px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+        .notification-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .notification.error { 
+            border-left: 4px solid #ff5f57;
+        }
+        .notification.error .notification-icon {
+            color: #ff5f57;
+        }
+        .notification.info { 
+            border-left: 4px solid #4a90e2;
+        }
+        .notification.info .notification-icon {
+            color: #4a90e2;
+        }
+        .notification.success { 
+            border-left: 4px solid #28c940;
+        }
+        .notification.success .notification-icon {
+            color: #28c940;
+        }
+        .notification.warning { 
+            border-left: 4px solid #ffbd2e;
+        }
+        .notification.warning .notification-icon {
+            color: #ffbd2e;
+        }
+        @keyframes slideInNotification { 
+            from { transform: translateX(100%); opacity: 0; } 
+            to { transform: translateX(0); opacity: 1; } 
+        }
+        #control-center { 
+            position: fixed; bottom: calc(var(--taskbar-height) + 20px); right: 20px; 
+            width: var(--control-center-width); background: var(--bg-secondary); 
+            backdrop-filter: blur(30px) saturate(180%); border: 1px solid var(--border-color); 
+            border-radius: var(--border-radius); box-shadow: var(--shadow-heavy); 
+            z-index: 4999; padding: 20px; 
+            visibility: hidden; opacity: 0; transform-origin: bottom right; 
+            transition: all var(--animation-speed) ease; transform: translateY(20px) scale(0.95); 
+            max-width: 90vw;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        #control-center.show { 
+            visibility: visible; opacity: 1; 
+            transform: translateY(0) scale(1); 
+        }
+        .control-group { 
+            margin-bottom: 20px; 
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        } 
+        .control-group:last-child {
+            border-bottom: none;
+        }
+        .control-group h4 { 
+            font-weight: 600; margin-bottom: 12px; 
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .control-slider { 
+            display: flex; align-items: center; gap: 10px; 
+            margin-top: 15px;
+        }
+        .control-slider input[type="range"] { 
+            -webkit-appearance: none; appearance: none; 
+            width: 100%; height: 8px; background: rgba(120, 120, 120, 0.3); 
+            border-radius: 4px; cursor: pointer; 
+            outline: none;
+        }
+        .control-slider input[type="range"]::-webkit-slider-thumb { 
+            -webkit-appearance: none; appearance: none; 
+            width: 20px; height: 20px; border-radius: 50%; 
+            background: var(--font-color); border: 3px solid var(--bg-secondary); 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        .control-slider input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+        .control-buttons { 
+            display: flex; justify-content: space-around; gap: 10px; 
+            flex-wrap: wrap;
+        }
+        .control-buttons .control-btn { 
+            flex-grow: 1; padding: 12px; border-radius: 10px; 
+            background: var(--item-hover-bg); border: none; 
+            color: var(--font-color); font-size: 1.5em; 
+            cursor: pointer; transition: all 0.3s; 
+            display: flex; justify-content: center; align-items: center;
+            min-width: 70px;
+        }
+        .control-buttons .control-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-3px);
+        }
+        .control-buttons .control-btn.active { 
+            background: var(--accent-color-primary); 
+            color: #fff; 
+        }
+        
+        /* --- App Specific Styles (Upgraded & Integrated) --- */
+        body.light-mode .window-body { background-color: rgba(255,255,255,0.4); }
+        body.light-mode .app-content.notepad textarea, 
+        body.light-mode .app-content.word-editor .word-editor-content, 
+        body.light-mode .app-content.terminal,
+        body.light-mode .app-content.code-editor #code-editor { 
+            color: var(--font-color-dark); 
+        }
+        body.light-mode .app-content.terminal { background-color: rgba(255,255,255,0.6); }
+        body.light-mode .terminal-prompt { color: #555; }
+        body.light-mode .terminal-input { color: #111; caret-color: #111; }
+        body.light-mode .browser-nav input { background-color: rgba(0,0,0,0.1); border-color: rgba(0,0,0,0.2); color: var(--font-color-dark); }
+        body.light-mode .calc-button { background: rgba(0,0,0,0.05); color: var(--font-color-dark); }
+        body.light-mode .task-list li { background-color: rgba(0,0,0,0.05); }
+        body.light-mode .word-editor-toolbar button, 
+        body.light-mode .spreadsheet-controls button, 
+        body.light-mode .chatbot-send-btn,
+        body.light-mode .theme-editor-controls button { 
+            color: var(--font-color-dark); background-color: rgba(0,0,0,0.05);
+        }
+        body.light-mode .explorer-item { background-color: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.05); }
+        body.light-mode .explorer-item:hover, 
+        body.light-mode .control-buttons .control-btn:hover { background-color: rgba(0,0,0,0.08); }
+        body.light-mode .explorer-item span, 
+        body.light-mode .spreadsheet-table td, 
+        body.light-mode .spreadsheet-table th { color: var(--font-color-dark); }
+        body.light-mode .spreadsheet-table, 
+        body.light-mode .spreadsheet-table td, 
+        body.light-mode .spreadsheet-table th { border-color: rgba(0,0,0,0.1); }
+        body.light-mode .chatbot-input { background-color: rgba(0,0,0,0.1); color: var(--font-color-dark); border-color: rgba(0,0,0,0.2); }
+        body.light-mode .chatbot-message.ai { background-color: rgba(0,0,0,0.1); }
+
+        .app-content.notepad textarea { 
+            width: 100%; height: 100%; border: none; background: transparent; 
+            color: var(--font-color); font-family: 'Consolas', monospace; 
+            font-size: 14px; resize: none; outline: none; padding: 15px;
+        }
+        .app-content.browser { display: flex; flex-direction: column; height: 100%; padding: 0;}
+        .browser-nav { display: flex; gap: 5px; margin-bottom: 5px; flex-shrink: 0; padding: 5px;}
+        .browser-nav input { 
+            flex-grow: 1; background-color: rgba(0,0,0,0.3); 
+            border: 1px solid var(--border-color); color: var(--font-color); 
+            padding: 8px 12px; border-radius: 8px; outline: none; font-size: 14px; 
+        }
+        .browser-nav button { 
+            background-color: var(--accent-color-primary); border: none; 
+            color: white; padding: 8px 15px; border-radius: 8px; 
+            cursor: pointer; transition: background-color 0.2s ease, transform 0.2s ease; 
+        }
+        .browser-content { flex-grow: 1; border: none; background-color: white; border-radius: 0 0 var(--border-radius) var(--border-radius); }
+        .app-content.terminal { 
+            background-color: rgba(0,0,0,0.6); font-family: 'Consolas', monospace; 
+            font-size: 14px; line-height: 1.5; height: 100%; padding: 10px; 
+            color: #7cfc00; overflow-y: auto; display: flex; flex-direction: column;
+        }
+        .terminal-output { 
+            flex-grow: 1; overflow-y: auto; 
+            margin-bottom: 10px; 
+            font-family: 'Consolas', monospace;
+        }
+        .terminal-output div { white-space: pre-wrap; }
+        .terminal-input-line { display: flex; margin-top: auto; } 
+        .terminal-prompt { white-space: pre; color: #aaa; }
+        .terminal-input { 
+            flex-grow: 1; background: transparent; border: none; 
+            color: #7cfc00; font-family: inherit; font-size: inherit; 
+            outline: none; caret-color: #7cfc00; 
+        }
+        .app-content.about { 
+            text-align: center; padding: 20px; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; height: 100%;
+        } 
+        .app-content.about h3 { 
+            color: var(--accent-color-primary); margin-bottom: 10px; 
+            font-size: 1.8em;
+        }
+        .app-content.about p { margin: 5px 0; }
+        .app-content.about .os-version { 
+            background: rgba(0,0,0,0.2); padding: 5px 15px; 
+            border-radius: 20px; margin-top: 20px; 
+            font-size: 0.9em;
+        }
+        .app-content.calculator { display: flex; flex-direction: column; gap: 10px; height: 100%; padding: 15px; }
+        .calc-display { 
+            background: rgba(0,0,0,0.2); border-radius: 8px; 
+            padding: 15px; text-align: right; font-size: 2.2em; 
+            font-weight: 300; overflow: hidden; text-overflow: ellipsis; 
+            white-space: nowrap; margin-bottom: 5px; 
+            min-height: 60px; display: flex; align-items: center; 
+            justify-content: flex-end;
+        }
+        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; flex-grow: 1;}
+        .calc-button { 
+            background: rgba(255,255,255,0.1); border: none; 
+            color: white; font-size: 1.3em; border-radius: 8px; 
+            cursor: pointer; transition: all 0.2s; 
+            display: flex; justify-content: center; align-items: center;
+        }
+        .calc-button.operator { background: var(--accent-color-primary); }
+        .word-editor-toolbar, 
+        .spreadsheet-controls, 
+        .code-editor-toolbar { 
+            padding: 8px; background-color: rgba(0,0,0,0.15); 
+            border-bottom: 1px solid var(--border-color); flex-shrink: 0; 
+            display: flex; gap: 5px; flex-wrap: wrap;
+        }
+        .word-editor-toolbar button, 
+        .spreadsheet-controls button, 
+        .code-editor-toolbar button { 
+            background-color: rgba(255,255,255,0.1); border:none; 
+            color:white; padding: 8px 12px; border-radius: 6px; cursor:pointer;
+        }
+        .word-editor-content { 
+            flex-grow: 1; overflow-y: auto; padding: 15px; 
+            outline:none; line-height: 1.6; 
+        }
+        .spreadsheet-container { flex-grow: 1; overflow: auto; }
+        .spreadsheet-table { border-collapse: collapse; width: 100%; min-width: max-content; }
+        .spreadsheet-table th, .spreadsheet-table td { border: 1px solid var(--border-color); padding: 8px; min-width: 80px; text-align: left; outline: none; }
+        .spreadsheet-table th { background-color: rgba(255,255,255,0.1); }
+        .spreadsheet-table td[contenteditable=true]:focus { box-shadow: inset 0 0 0 2px var(--accent-color-primary); }
+        .explorer-path { 
+            padding: 10px; background-color: rgba(0,0,0,0.2); 
+            border-bottom: 1px solid var(--border-color); display: flex; 
+            align-items: center; gap: 5px; flex-shrink: 0;
+        }
+        .file-explorer-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+            gap: 15px; align-content: start; flex-grow:1; 
+            overflow-y: auto; padding: 15px;
+        }
+        .explorer-item { 
+            display: flex; flex-direction: column; align-items: center; 
+            gap: 8px; padding: 10px; border-radius: var(--border-radius); 
+            transition: all 0.2s ease; cursor: pointer; text-align: center; 
+        }
+        .explorer-item:hover { background-color: var(--item-hover-bg); transform: translateY(-3px); }
+        .explorer-item i { font-size: 40px; } 
+        .explorer-item span { font-size: 0.85em; word-break: break-all; }
+        .explorer-item.folder i { color: #f7b529; } 
+        .explorer-item.text i { color: #1abc9c; }
+        .explorer-item.image i { color: #e74c3c; }
+        .explorer-item.music i { color: #9b59b6; }
+        .explorer-item.code i { color: #3498db; }
+        .task-list { list-style: none; padding: 0; flex-grow: 1; overflow-y: auto; }
+        .task-list li { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 10px 15px; margin-bottom: 8px; background-color: var(--item-hover-bg); 
+            border-radius: 8px; 
+        }
+        .task-list li button { background-color: #e94b35; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .chatbot-messages { flex-grow: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; }
+        .chatbot-message { 
+            margin-bottom: 10px; padding: 8px 12px; border-radius: 15px; 
+            max-width: 80%; align-self: flex-start;
+        }
+        .chatbot-message.user { 
+            background-color: var(--accent-color-primary); 
+            align-self: flex-end; margin-left: auto; color: white; 
+        }
+        .chatbot-message.ai { background-color: var(--bg-tertiary); }
+        .chatbot-input-area { display: flex; padding: 10px; border-top: 1px solid var(--border-color); flex-shrink: 0;}
+        .chatbot-input { 
+            flex-grow: 1; padding: 8px 15px; border-radius: 20px; 
+            border: 1px solid var(--border-color); background-color: rgba(0,0,0,0.3); 
+            color: var(--font-color); outline: none;
+        }
+        .chatbot-send-btn { 
+            margin-left: 10px; background-color: var(--accent-color-primary); 
+            border: none; border-radius: 50%; width: 40px; height: 40px; 
+            display: flex; justify-content: center; align-items: center; 
+            cursor: pointer; color: white;
+        }
+        
+        /* --- App Store Styles --- */
+        .app-store-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+            padding: 15px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        .app-store-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .app-store-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+        .app-store-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: var(--accent-color-primary);
+        }
+        .app-store-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        .app-store-desc {
+            font-size: 0.8em;
+            color: #aaa;
+            margin-bottom: 10px;
+            height: 36px;
+            overflow: hidden;
+        }
+        .app-store-btn {
+            background: var(--accent-color-primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.8em;
+            cursor: pointer;
+        }
+        .app-store-btn.installed {
+            background: #28c940;
+        }
+        
+        /* --- NEW APP STYLES --- */
+        /* --- Mail App Styles --- */
+        .app-content-mail { display: flex; height: 100%; padding:0; background: transparent; }
+        .mail-sidebar { width: 200px; border-right: 1px solid var(--border-color); padding: 15px; flex-shrink: 0; background: rgba(0,0,0,0.1); }
+        .mail-compose-btn { width: 100%; padding: 10px; background: var(--accent-color-primary); color: white; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 20px; font-weight: 600; }
+        .mail-sidebar ul { list-style: none; }
+        .mail-sidebar li { padding: 12px 15px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .mail-sidebar li:hover { background: var(--item-hover-bg); }
+        .mail-sidebar li.active { font-weight: bold; color: var(--accent-color-primary); }
+        .mail-sidebar li i { margin-right: 10px; }
+        .mail-count { background: var(--accent-color-secondary); color: white; border-radius: 10px; font-size: 0.8em; padding: 2px 8px; }
+        .mail-list { flex-grow: 1; overflow-y: auto; }
+        .mail-item { padding: 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; }
+        .mail-item:hover { background: var(--item-hover-bg); }
+        .mail-sender { font-weight: 600; }
+        .mail-subject { margin: 2px 0; }
+        .mail-preview { font-size: 0.9em; opacity: 0.7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        body.light-mode .mail-sidebar { background: rgba(255,255,255,0.2); }
+        body.light-mode .mail-item:hover { background-color: rgba(0,0,0,0.08); }
+
+
+        /* --- Notes App Styles --- */
+        .app-content-notes { display: flex; flex-direction: column; height: 100%; padding: 0; background: transparent;}
+        .notes-textarea { flex-grow: 1; width: 100%; border: none; background: transparent; color: var(--font-color); font-family: 'Segoe UI', sans-serif; font-size: 15px; resize: none; outline: none; padding: 15px; line-height: 1.6; }
+        .notes-save-btn { padding: 12px; background: var(--accent-color-primary); color: white; border: none; cursor: pointer; font-weight: 600; flex-shrink: 0;}
+        body.light-mode .notes-textarea { color: var(--font-color-dark); }
+        body.light-mode .notes-save-btn { color: white; }
+
+        /* --- Calendar App Styles --- */
+        .app-content-calendar { padding: 15px; display: flex; flex-direction: column; height: 100%; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .calendar-header h3 { margin: 0; color: var(--font-color); }
+        .calendar-header button { background: none; border: none; color: var(--icon-color); font-size: 1.2em; cursor: pointer; padding: 5px 10px; border-radius: 50%; }
+        .calendar-header button:hover { background-color: var(--icon-hover-bg); }
+        .calendar-weekdays, .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+        .calendar-weekdays { font-weight: 600; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
+        .calendar-days { flex-grow: 1; }
+        .calendar-days div { height: 100%; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; }
+        .calendar-days div:hover:not(.today) { background: var(--item-hover-bg); }
+        .calendar-days .other-month { opacity: 0.4; pointer-events: none; }
+        .calendar-days .today { background: var(--accent-color-primary); color: white; font-weight: bold; }
+        body.light-mode .calendar-header h3 { color: var(--font-color-dark); }
+
+        /* --- PDF Viewer Styles --- */
+        .app-content-pdf { display: flex; flex-direction: column; height: 100%; padding: 0; }
+        .pdf-toolbar { padding: 8px; background-color: rgba(0,0,0,0.15); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 15px; flex-shrink: 0;}
+        #pdf-upload-btn { background: var(--accent-color-primary); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; }
+        #pdf-filename { font-size: 0.9em; opacity: 0.8; }
+        #pdf-viewer { flex-grow: 1; }
+        .pdf-viewer-placeholder { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.2); margin: 10px; border-radius: 8px; }
+        .pdf-viewer-placeholder i { font-size: 5em; opacity: 0.3; }
+        .pdf-viewer-placeholder p { margin-top: 15px; opacity: 0.6; }
+        #pdf-viewer-iframe { width: 100%; height: 100%; border: none; }
+        body.light-mode .pdf-viewer-placeholder { background: rgba(0,0,0,0.05); }
+        body.light-mode .pdf-toolbar { background-color: rgba(0,0,0,0.05); }
+        
+        /* --- System Info Styles --- */
+        .system-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 20px;
+        }
+        .system-info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .system-info-card h4 {
+            margin-bottom: 10px;
+            color: var(--accent-color-primary);
+        }
+        .progress-container {
+            margin-top: 10px;
+        }
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .progress-value {
+            height: 100%;
+            background: var(--accent-color-primary);
+            border-radius: 4px;
+        }
+        
+        /* --- Theme Editor Styles --- */
+        .theme-editor {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 15px;
+        }
+        .theme-preview {
+            flex-grow: 1;
+            background: linear-gradient(135deg, var(--preview-bg1), var(--preview-bg2));
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .theme-preview-header {
+            height: 40px;
+            background: var(--preview-header);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            border-bottom: 1px solid var(--preview-border);
+        }
+        .theme-preview-content {
+            flex-grow: 1;
+            padding: 15px;
+        }
+        .theme-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .theme-control {
+            margin-bottom: 15px;
+        }
+        .theme-control label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        .theme-control input[type="color"] {
+            width: 100%;
+            height: 36px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .theme-editor-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        /* --- Code Editor Styles --- */
+        .code-editor-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        #code-editor {
+            flex-grow: 1;
+            width: 100%;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Consolas', monospace;
+            border: none;
+            padding: 15px;
+            resize: none;
+            outline: none;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre;
+        }
+        
+        /* --- Screenshot & Recorder --- */
+        .screenshot-container {
+            padding: 20px;
+            text-align: center;
+        }
+        .screenshot-preview {
+            width: 100%;
+            height: 300px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            transition: all 0.3s ease;
+        }
+        .recorder-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .recorder-btn {
+            padding: 10px 20px;
+            background: var(--accent-color-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        /* --- Workspace Styles --- */
+        .workspace-view {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .workspace-view.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 20px;
+            width: 90%;
+            height: 80%;
+        }
+        .workspace-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        .workspace-thumbnail {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        .workspace-item.active .workspace-thumbnail {
+            opacity: 1;
+            box-shadow: 0 0 0 3px var(--accent-color-primary);
+        }
+        .workspace-number {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* --- Context Menu Styles --- */
+        .context-menu {
+            position: fixed;
+            background: var(--context-menu-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow-heavy);
+            z-index: 10000;
+            min-width: 200px;
+            display: none;
+        }
+        .context-menu-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+        .context-menu-item:hover {
+            background-color: var(--item-hover-bg);
+        }
+        .context-menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+        .context-menu-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 5px 0;
+        }
+        
+        /* --- Keyboard Shortcut Helper --- */
+        #shortcut-helper {
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-tertiary);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow-heavy);
+            z-index: 6000;
+            display: none;
+            width: 400px;
+            max-width: 90vw;
+        }
+        .shortcut-header {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--accent-color-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .shortcut-close {
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .shortcut-key {
+            background: rgba(255,255,255,0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-left: 10px;
+            font-family: monospace;
+        }
+        
+        /* --- Mobile Responsive Styles --- */
+        @media (max-width: 768px) {
+            #taskbar {
+                width: 95%;
+                padding: 0 5px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            #system-tray {
+                display: none;
+            }
+            .window {
+                min-width: 90vw !important;
+                min-height: 60vh !important;
+            }
+            #desktop-icons {
+                top: 10px;
+                left: 10px;
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+                gap: 5px;
+            }
+            .desktop-icon {
+                padding: 5px;
+                gap: 5px;
+            }
+            .desktop-icon i {
+                font-size: 28px;
+            }
+            .desktop-icon span {
+                font-size: 11px;
+            }
+            #start-menu {
+                width: 90vw;
+                height: 70vh;
+            }
+            .control-buttons {
+                flex-wrap: wrap;
+            }
+            .control-buttons .control-btn {
+                width: 45%;
+            }
+            .desktop-widget {
+                display: none;
+            }
+        }
+        
+        /* --- Snap Zones --- */
+        .snap-zone {
+            position: fixed;
+            z-index: 3000;
+            background: rgba(74, 144, 226, 0.3);
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+        .snap-zone.active {
+            opacity: 1;
+            box-shadow: 0 0 0 4px var(--accent-color-primary);
+        }
+        #snap-left {
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+        }
+        #snap-right {
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+        }
+        #snap-top {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+        }
+        #snap-bottom {
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+        }
+        #snap-full {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* --- Parallax Effect --- */
+        .parallax-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            will-change: transform;
+            transition: transform 0.1s ease-out;
+        }
+        
+        /* --- Depth Effect --- */
+        .depth-layer {
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        .depth-layer:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        /* --- New App Icons --- */
+        .app-icon-mail { color: #d44638; }
+        .app-icon-calendar { color: #1a73e8; }
+        .app-icon-video { color: #e91e63; }
+        .app-icon-recorder { color: #9c27b0; }
+        .app-icon-notes { color: #ff9800; }
+        .app-icon-settings { color: #607d8b; }
+        .app-icon-photo { color: #4caf50; }
+        .app-icon-pdf { color: #f44336; }
+        .app-icon-recycle { color: #8bc34a; }
+        .app-icon-screenshot { color: #00bcd4; }
+        .app-icon-mail { color: #d44638; }
+        
+        /* --- Loading Spinner --- */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid var(--accent-color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+
+    <div id="login-screen">
+        <div class="login-container">
+            <div class="login-logo"><i class="fa-solid fa-bolt"></i></div>
+            <div class="login-title">Kynay OS Supreme Edition</div>
+            <input type="text" id="username" class="login-input" placeholder="Username" value="admin">
+            <input type="password" id="password" class="login-input" placeholder="Password" value="admin">
+            <button id="login-btn" class="login-btn">Login</button>
+            <div class="login-footer">
+                <p>Default: admin/admin, guest/guest</p>
+                <p>© 2025 Farhan Kertadiwangsa</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="boot-screen">
+        <div class="boot-container">
+            <div class="boot-logo">
+                <div class="bolt-container">
+                    <div class="bolt-face"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="bolt-face"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="bolt-face"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="bolt-face"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="bolt-face"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="bolt-face"><i class="fa-solid fa-bolt"></i></div>
+                </div>
+            </div>
+            <h1>Kynay OS Supreme</h1>
+            <p>Edition "Aether"</p>
+            <p class="creator-name">Farhan Kertadiwangsa</p>
+            <div class="boot-progress">
+                <div class="boot-progress-bar" id="boot-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="desktop">
+        <div class="desktop-content">
+            <div id="desktop-icons">
+                <div class="desktop-icon" data-app="file-explorer" title="FileSaya"><i class="fa-solid fa-folder" style="color: #f7b529;"></i><span>FileSaya</span></div>
+                <div class="desktop-icon" data-app="browser" title="Browser"><i class="fa-solid fa-globe" style="color: #3b88c3;"></i><span>Browser</span></div>
+                <div class="desktop-icon" data-app="word-editor" title="Kynay Write"><i class="fa-solid fa-file-word" style="color: #2a569a;"></i><span>Write</span></div>
+                <div class="desktop-icon" data-app="terminal" title="Terminal"><i class="fa-solid fa-terminal" style="color: #7cfc00;"></i><span>Terminal</span></div>
+                <div class="desktop-icon" data-app="about" title="Tentang Kynay OS"><i class="fa-solid fa-circle-info" style="color: #1abc9c;"></i><span>Tentang</span></div>
+                <div class="desktop-icon" data-app="app-store" title="App Store"><i class="fa-solid fa-store" style="color: #9b59b6;"></i><span>App Store</span></div>
+            </div>
+            
+            <div class="desktop-widget widget-clock">
+                <div class="widget-title"><i class="fas fa-clock"></i> Jam</div>
+                <div class="clock-time" id="widget-clock-time">00:00:00</div>
+                <div class="clock-date" id="widget-clock-date">Minggu, 1 Januari 2025</div>
+            </div>
+            
+            <div class="desktop-widget widget-weather">
+                <div class="widget-title"><i class="fas fa-cloud-sun"></i> Cuaca</div>
+                <div class="weather-info">
+                    <div class="weather-icon"><i class="fas fa-sun"></i></div>
+                    <div class="weather-details">
+                        <div class="weather-temp">28°C</div>
+                        <div class="weather-desc">Cerah</div>
+                        <div class="weather-location">Jakarta, ID</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="desktop-widget widget-notes">
+                <div class="widget-title"><i class="fas fa-sticky-note"></i> Catatan</div>
+                <textarea class="notes-content" placeholder="Tulis catatan di sini...">Meeting besok jam 10:00</textarea>
+            </div>
+            
+            <div class="desktop-widget widget-music">
+                <div class="widget-title"><i class="fas fa-music"></i> Sedang Diputar</div>
+                <div class="music-info">
+                    <div class="music-title">Stargazing</div>
+                    <div class="music-artist">Anonymous Artist</div>
+                    <div class="music-progress">
+                        <div class="music-progress-bar"></div>
+                    </div>
+                </div>
+                <div class="music-controls">
+                    <button class="music-btn"><i class="fas fa-step-backward"></i></button>
+                    <button class="music-btn"><i class="fas fa-play"></i></button>
+                    <button class="music-btn"><i class="fas fa-step-forward"></i></button>
+                    <button class="music-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="taskbar">
+        <div id="start-button" title="Start Menu"><i class="fa-solid fa-bolt"></i></div>
+        <div id="taskbar-apps"></div>
+        <div id="workspace-switcher">
+            <div class="workspace-btn active" data-workspace="0">1</div>
+            <div class="workspace-btn" data-workspace="1">2</div>
+            <div class="workspace-btn" data-workspace="2">3</div>
+            <div class="workspace-btn" data-workspace="3">4</div>
+        </div>
+        <div id="system-tray">
+            <div id="clock"></div>
+            <i class="fas fa-sliders system-tray-icon" id="control-center-btn" title="Control Center"></i>
+            <i class="fas fa-expand system-tray-icon" id="workspace-view-btn" title="View Workspaces"></i>
+            <i class="fas fa-camera system-tray-icon" id="screenshot-btn" title="Take Screenshot"></i>
+            <i class="fas fa-power-off system-tray-icon" id="shutdown-btn" title="Shutdown"></i>
+        </div>
+    </div>
+    
+    <div id="start-menu">
+        <div class="start-menu-header">
+            <input type="text" class="start-menu-search" placeholder="Cari aplikasi, pengaturan, atau file...">
+            <div class="start-menu-user">FK</div>
+        </div>
+        <div class="start-menu-content">
+            <div class="start-menu-sidebar">
+                <div class="start-menu-category">
+                    <h4>Favorit</h4>
+                    <div class="start-menu-category-item active">
+                        <i class="fas fa-home"></i>
+                        <span>Beranda</span>
+                    </div>
+                    <div class="start-menu-category-item">
+                        <i class="fas fa-star"></i>
+                        <span>Favorit</span>
+                    </div>
+                </div>
+                <div class="start-menu-category">
+                    <h4>Kategori</h4>
+                    <div class="start-menu-category-item">
+                        <i class="fas fa-folder"></i>
+                        <span>File & Explorer</span>
+                    </div>
+                    <div class="start-menu-category-item">
+                        <i class="fas fa-globe"></i>
+                        <span>Internet</span>
+                    </div>
+                    <div class="start-menu-category-item">
+                        <i class="fas fa-pencil-alt"></i>
+                        <span>Produktivitas</span>
+                    </div>
+                    <div class="start-menu-category-item">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Game & Hiburan</span>
+                    </div>
+                    <div class="start-menu-category-item">
+                        <i class="fas fa-cog"></i>
+                        <span>Pengaturan</span>
+                    </div>
+                </div>
+            </div>
+            <div class="start-menu-apps">
+                <h2>Aplikasi</h2>
+                <div class="start-menu-items">
+                    <div class="start-menu-item" data-app="file-explorer"><i class="fa-solid fa-folder"></i><span>FileSaya</span></div>
+                    <div class="start-menu-item" data-app="notepad"><i class="fa-solid fa-file-alt"></i><span>Notepad</span></div>
+                    <div class="start-menu-item" data-app="word-editor"><i class="fa-solid fa-file-word"></i><span>Kynay Write</span></div>
+                    <div class="start-menu-item" data-app="spreadsheet"><i class="fa-solid fa-file-excel"></i><span>Kynay Sheet</span></div>
+                    <div class="start-menu-item" data-app="browser"><i class="fa-solid fa-globe"></i><span>Browser</span></div>
+                    <div class="start-menu-item" data-app="terminal"><i class="fa-solid fa-terminal"></i><span>Terminal</span></div>
+                    <div class="start-menu-item" data-app="calculator"><i class="fa-solid fa-calculator"></i><span>Kalkulator</span></div>
+                    <div class="start-menu-item" data-app="music"><i class="fa-solid fa-music"></i><span>Musik</span></div>
+                    <div class="start-menu-item" data-app="gallery"><i class="fa-solid fa-images"></i><span>Galeri</span></div>
+                    <div class="start-menu-item" data-app="chatbot"><i class="fa-solid fa-comments"></i><span>Chatbot AI</span></div>
+                    <div class="start-menu-item" data-app="task-manager"><i class="fa-solid fa-list-check"></i><span>Manajer Tugas</span></div>
+                    <div class="start-menu-item" data-app="about"><i class="fa-solid fa-circle-info"></i><span>Tentang</span></div>
+                    <div class="start-menu-item" data-app="app-store"><i class="fa-solid fa-store"></i><span>App Store</span></div>
+                    <div class="start-menu-item" data-app="system-info"><i class="fa-solid fa-gauge"></i><span>System Info</span></div>
+                    <div class="start-menu-item" data-app="theme-editor"><i class="fa-solid fa-palette"></i><span>Theme Editor</span></div>
+                    <div class="start-menu-item" data-app="code-editor"><i class="fa-solid fa-code"></i><span>Code Editor</span></div>
+                    <div class="start-menu-item" data-app="screenshot"><i class="fa-solid fa-camera"></i><span>Screenshot</span></div>
+                    
+                    <div class="start-menu-item" data-app="mail"><i class="fas fa-envelope app-icon-mail"></i><span>Email</span></div>
+                    <div class="start-menu-item" data-app="calendar"><i class="fas fa-calendar app-icon-calendar"></i><span>Kalender</span></div>
+                    <div class="start-menu-item" data-app="video"><i class="fas fa-film app-icon-video"></i><span>Pemutar Video</span></div>
+                    <div class="start-menu-item" data-app="recorder"><i class="fas fa-microphone app-icon-recorder"></i><span>Perekam Suara</span></div>
+                    <div class="start-menu-item" data-app="notes"><i class="fas fa-sticky-note app-icon-notes"></i><span>Catatan</span></div>
+                    <div class="start-menu-item" data-app="settings"><i class="fas fa-cog app-icon-settings"></i><span>Pengaturan</span></div>
+                    <div class="start-menu-item" data-app="photo"><i class="fas fa-image app-icon-photo"></i><span>Penampil Foto</span></div>
+                    <div class="start-menu-item" data-app="pdf"><i class="fas fa-file-pdf app-icon-pdf"></i><span>Penampil PDF</span></div>
+                    <div class="start-menu-item" data-app="recycle"><i class="fas fa-trash app-icon-recycle"></i><span>Tempat Sampah</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="control-center">
+        <div class="control-group">
+            <h4><i class="fas fa-desktop"></i> Tampilan</h4>
+            <div class="control-buttons">
+                <button class="control-btn" id="theme-toggle-btn" title="Toggle Dark/Light Mode"><i class="fas fa-moon"></i></button>
+                <button class="control-btn" id="fullscreen-btn" title="Toggle Fullscreen"><i class="fas fa-expand"></i></button>
+            </div>
+        </div>
+        <div class="control-group">
+            <h4><i class="fas fa-sliders-h"></i> Simulasi Sistem</h4>
+            <div class="control-slider"><i class="fas fa-volume-up"></i><input type="range" min="0" max="100" value="75" title="Volume (Simulasi)" id="volume-slider"></div>
+            <div class="control-slider"><i class="fas fa-sun"></i><input type="range" min="0" max="100" value="80" title="Brightness (Simulasi)" id="brightness-slider"></div>
+        </div>
+         <div class="control-group">
+            <h4><i class="fas fa-image"></i> Wallpaper Animasi</h4>
+            <div class="control-buttons">
+                <button class="control-btn wallpaper-btn" data-theme="waves" title="Waves Theme"><i class="fas fa-water"></i></button>
+                <button class="control-btn wallpaper-btn" data-theme="net" title="Net Theme"><i class="fas fa-project-diagram"></i></button>
+                <button class="control-btn wallpaper-btn" data-theme="rings" title="Rings Theme"><i class="fas fa-ring"></i></button>
+                <button class="control-btn wallpaper-btn" data-theme="birds" title="Birds Theme"><i class="fas fa-dove"></i></button>
+                <button class="control-btn wallpaper-btn" data-theme="fog" title="Fog Theme"><i class="fas fa-smog"></i></button>
+                <button class="control-btn wallpaper-btn" data-theme="dots" title="Dots Theme"><i class="fas fa-circle"></i></button>
+                <button class="control-btn wallpaper-btn" data-theme="aot" title="Attack on Titan"><i class="fas fa-fist-raised"></i></button>
+                <button class="control-btn wallpaper-btn" data-theme="demon" title="Demon Slayer"><i class="fas fa-fire"></i></button>
+                <button class="control-btn wallpaper-btn" data-theme="custom" title="Upload Custom"><i class="fas fa-upload"></i></button>
+            </div>
+        </div>
+        <div class="control-group">
+            <h4><i class="fas fa-chart-line"></i> System Monitor</h4>
+            <div class="progress-container">
+                <div>CPU Usage: <span id="cpu-usage-value">45%</span></div>
+                <div class="progress-bar">
+                    <div class="progress-value" id="cpu-usage-bar" style="width: 45%"></div>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div>RAM Usage: <span id="ram-usage-value">60%</span></div>
+                <div class="progress-bar">
+                    <div class="progress-value" id="ram-usage-bar" style="width: 60%"></div>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div>Network: <span id="network-usage-value">1.2 MB/s</span></div>
+                <div class="progress-bar">
+                    <div class="progress-value" id="network-usage-bar" style="width: 30%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <h4><i class="fas fa-cloud"></i> Cloud Sync</h4>
+            <button class="control-btn" id="cloud-sync-btn"><i class="fas fa-cloud"></i> Sync Now</button>
+        </div>
+        <div class="control-group">
+            <h4><i class="fas fa-sync-alt"></i> System Update</h4>
+            <button class="control-btn" id="system-update-btn"><i class="fas fa-sync-alt"></i> Check for Updates</button>
+        </div>
+    </div>
+
+    <div id="workspace-view" class="workspace-view">
+        <div class="workspace-grid">
+            <div class="workspace-item active" data-workspace="0">
+                <div class="workspace-thumbnail" style="background-color: #1a2c4a;"></div>
+                <div class="workspace-number">1</div>
+            </div>
+            <div class="workspace-item" data-workspace="1">
+                <div class="workspace-thumbnail" style="background-color: #2c3e50;"></div>
+                <div class="workspace-number">2</div>
+            </div>
+            <div class="workspace-item" data-workspace="2">
+                <div class="workspace-thumbnail" style="background-color: #34495e;"></div>
+                <div class="workspace-number">3</div>
+            </div>
+            <div class="workspace-item" data-workspace="3">
+                <div class="workspace-thumbnail" style="background-color: #2c3e50;"></div>
+                <div class="workspace-number">4</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-container"></div>
+    
+    <div class="snap-zone" id="snap-left"></div>
+    <div class="snap-zone" id="snap-right"></div>
+    <div class="snap-zone" id="snap-top"></div>
+    <div class="snap-zone" id="snap-bottom"></div>
+    <div class="snap-zone" id="snap-full"></div>
+    
+    <div id="shortcut-helper">
+        <div class="shortcut-header">
+            <span>Keyboard Shortcuts</span>
+            <span class="shortcut-close">&times;</span>
+        </div>
+        <div class="shortcut-item"><span>Win Key</span><span class="shortcut-key">Start Menu</span></div>
+        <div class="shortcut-item"><span>Alt + Tab</span><span class="shortcut-key">Switch Apps</span></div>
+        <div class="shortcut-item"><span>Win + D</span><span class="shortcut-key">Show Desktop</span></div>
+        <div class="shortcut-item"><span>Win + E</span><span class="shortcut-key">File Explorer</span></div>
+        <div class="shortcut-item"><span>Ctrl + Shift + Esc</span><span class="shortcut-key">Task Manager</span></div>
+        <div class="shortcut-item"><span>Win + L</span><span class="shortcut-key">Lock Screen</span></div>
+        <div class="shortcut-item"><span>Win + C</span><span class="shortcut-key">Control Center</span></div>
+        <div class="shortcut-item"><span>Win + S</span><span class="shortcut-key">Screenshot</span></div>
+        <div class="shortcut-item"><span>Win + W</span><span class="shortcut-key">Workspace View</span></div>
+        <div class="shortcut-item"><span>F1</span><span class="shortcut-key">Shortcut Help</span></div>
+    </div>
+    
+    <div class="context-menu" id="desktop-context-menu">
+        <div class="context-menu-item" id="new-folder"><i class="fas fa-folder-plus"></i> Folder Baru</div>
+        <div class="context-menu-item" id="new-file"><i class="fas fa-file"></i> File Baru</div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" id="paste-item"><i class="fas fa-paste"></i> Tempel</div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" id="refresh-desktop"><i class="fas fa-sync-alt"></i> Segarkan</div>
+        <div class="context-menu-item" id="show-desktop"><i class="fas fa-desktop"></i> Tampilkan Desktop</div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" id="view-options"><i class="fas fa-th-large"></i> Opsi Tampilan</div>
+        <div class="context-menu-item" id="sort-by"><i class="fas fa-sort"></i> Urutkan Berdasarkan</div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" id="desktop-settings"><i class="fas fa-cog"></i> Pengaturan Desktop</div>
+    </div>
+    
+    <div class="context-menu" id="taskbar-context-menu">
+        <div class="context-menu-item" id="task-manager-shortcut"><i class="fas fa-list-check"></i> Task Manager</div>
+        <div class="context-menu-item" id="close-all"><i class="fas fa-times-circle"></i> Tutup Semua Jendela</div>
+        <div class="context-menu-item" id="minimize-all"><i class="fas fa-window-minimize"></i> Minimize Semua</div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" id="taskbar-settings"><i class="fas fa-cog"></i> Pengaturan Taskbar</div>
+    </div>
+
+    <div class="context-menu" id="file-context-menu">
+        <div class="context-menu-item" id="open-file"><i class="fas fa-folder-open"></i> Buka</div>
+        <div class="context-menu-item" id="rename-file"><i class="fas fa-edit"></i> Ubah Nama</div>
+        <div class="context-menu-item" id="copy-file"><i class="fas fa-copy"></i> Salin</div>
+        <div class="context-menu-item" id="cut-file"><i class="fas fa-cut"></i> Potong</div>
+        <div class="context-menu-item" id="paste-file"><i class="fas fa-paste"></i> Tempel</div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" id="delete-file"><i class="fas fa-trash"></i> Hapus</div>
+        <div class="context-menu-item" id="create-shortcut"><i class="fas fa-link"></i> Buat Shortcut</div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" id="file-properties"><i class="fas fa-info-circle"></i> Properti</div>
+    </div>
+
+    <template id="window-template">
+        <div class="window">
+            <div class="window-header">
+                <div class="window-controls">
+                    <div class="window-control" id="close-btn" title="Close"><i class="fas fa-times"></i></div>
+                    <div class="window-control" id="minimize-btn" title="Minimize"><i class="fas fa-minus"></i></div>
+                    <div class="window-control" id="maximize-btn" title="Maximize"><i class="fas fa-expand"></i></div>
+                </div>
+                <span class="window-title"></span>
+            </div>
+            <div class="window-body"></div>
+        </div>
+    </template>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const ANIMATION_DURATION = 300; 
+        let vantaEffect = null;
+        let currentUser = null;
+        let workspaces = [[],[],[],[]];
+        let currentWorkspace = 0;
+        let highestZIndex = 100;
+        const openWindows = new Map();
+        const availableApps = {
+            'code-editor': { name: 'Kynay Code', icon: 'fa-code', description: 'Editor kode untuk HTML, CSS, JS' },
+            'theme-editor': { name: 'Theme Builder', icon: 'fa-palette', description: 'Buat tema kustom untuk OS' },
+            'system-info': { name: 'System Monitor', icon: 'fa-gauge', description: 'Pantau penggunaan sistem' },
+            'mail': { name: 'Email', icon: 'fa-envelope', description: 'Klien email' },
+            'calendar': { name: 'Kalender', icon: 'fa-calendar', description: 'Kalender dan perencana' },
+            'video': { name: 'Pemutar Video', icon: 'fa-film', description: 'Pemutar video' },
+            'recorder': { name: 'Perekam Suara', icon: 'fa-microphone', description: 'Rekam dan edit audio' },
+            'notes': { name: 'Catatan', icon: 'fa-sticky-note', description: 'Buat catatan cepat' },
+            'settings': { name: 'Pengaturan', icon: 'fa-cog', description: 'Pengaturan sistem' },
+            'photo': { name: 'Penampil Foto', icon: 'fa-image', description: 'Lihat dan edit gambar' },
+            'pdf': { name: 'Penampil PDF', icon: 'fa-file-pdf', description: 'Buka file PDF' },
+            'recycle': { name: 'Tempat Sampah', icon: 'fa-trash', description: 'File yang dihapus' },
+            'screenshot': { name: 'Alat Tangkapan Layar', icon: 'fa-camera', description: 'Ambil tangkapan layar' }
+        };
+        
+        // Context Menu State
+        let currentContextMenu = null;
+        let desktopParallaxEnabled = true;
+
+        // --- Login System ---
+        function showLoginScreen() {
+            document.getElementById('login-screen').classList.add('show');
+        }
+        
+        function hideLoginScreen() {
+            document.getElementById('login-screen').classList.remove('show');
+        }
+        
+        document.getElementById('login-btn').addEventListener('click', () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Dummy authentication
+            if ((username === 'admin' && password === 'admin') || 
+                (username === 'guest' && password === 'guest')) {
+                currentUser = username;
+                localStorage.setItem('kynay-os-user', username);
+                hideLoginScreen();
+                startBootSequence();
+            } else {
+                showNotification('Login gagal! Coba admin/admin atau guest/guest', 'error');
+            }
+        });
+        
+        // Check if user is already logged in
+        const savedUser = localStorage.getItem('kynay-os-user');
+        if (savedUser) {
+            currentUser = savedUser;
+            startBootSequence();
+        } else {
+            showLoginScreen();
+        }
+
+        // --- Boot Sequence ---
+        function startBootSequence() {
+            document.getElementById('boot-screen').style.display = 'flex';
+            let progress = 0;
+            const progressBar = document.getElementById('boot-progress');
+            
+            // Play boot sound
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(880, audioContext.currentTime + 1.5);
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.5);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 1.5);
+            } catch (e) {
+                console.log("Audio not supported");
+            }
+            
+            const bootInterval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(bootInterval);
+                    setTimeout(() => {
+                        document.getElementById('boot-screen').style.opacity = '0';
+                        setTimeout(() => {
+                            document.getElementById('boot-screen').style.visibility = 'hidden';
+                            showNotification('Selamat datang di Kynay OS Supreme Edition!', 'info');
+                            loadState();
+                            
+                            // Initialize desktop widgets
+                            updateClock();
+                            updateWidgetClock();
+                        }, 1500);
+                    }, 500);
+                }
+                progressBar.style.width = `${progress}%`;
+            }, 200);
+        }
+
+        // --- Notification System ---
+        function showNotification(message, type = 'info', actions = []) {
+            const container = document.getElementById('notification-container');
+            const notif = document.createElement('div');
+            notif.className = `notification notification-${type}`;
+            
+            let icon = 'fa-info-circle';
+            if (type === 'error') icon = 'fa-exclamation-circle';
+            if (type === 'success') icon = 'fa-check-circle';
+            if (type === 'warning') icon = 'fa-exclamation-triangle';
+            
+            let actionsHtml = '';
+            if (actions.length > 0) {
+                actionsHtml = `<div class="notification-actions">`;
+                actions.forEach(action => {
+                    actionsHtml += `<button class="notification-btn">${action}</button>`;
+                });
+                actionsHtml += `</div>`;
+            }
+            
+            notif.innerHTML = `
+                <div class="notification-icon"><i class="fas ${icon}"></i></div>
+                <div class="notification-content">
+                    <div class="notification-title">${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+                    <div class="notification-message">${message}</div>
+                    ${actionsHtml}
+                </div>
+            `;
+            
+            container.appendChild(notif);
+            setTimeout(() => { 
+                notif.style.opacity = '0'; 
+                setTimeout(() => notif.remove(), 500); 
+            }, 5000);
+            
+            // Play notification sound
+            try {
+                const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alert-quick-notification-2291.mp3');
+                audio.volume = 0.3;
+                audio.play();
+            } catch (e) {
+                console.log("Notification sound not played");
+            }
+        }
+        
+        // --- Wallpaper Management ---
+        const wallpaperThemes = {
+            waves: { effect: 'WAVES', options: { el: "#desktop", mouseControls: true, touchControls: true, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, color: 0x1a2c4a, shininess: 40.00, waveHeight: 15.00, waveSpeed: 0.70, zoom: 0.8 } },
+            net: { effect: 'NET', options: { el: "#desktop", mouseControls: true, touchControls: true, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, color: 0x3b88c3, backgroundColor: 0x0d1117, points: 12.00, maxDistance: 25.00, spacing: 18.00 } },
+            rings: { effect: 'RINGS', options: { el: "#desktop", mouseControls: true, touchControls: true, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, color: 0x4a90e2, backgroundColor: 0x0d1117, strength: 1.20 } },
+            birds: { effect: 'BIRDS', options: { el: "#desktop", mouseControls: true, touchControls: true, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, backgroundColor: 0x0d1117, color1: 0x4a90e2, color2: 0x9b59b6, birdSize: 1.00, wingSpan: 20.00, speedLimit: 5.00, separation: 50.00, alignment: 50.00, cohesion: 50.00 } },
+            fog: { effect: 'FOG', options: { el: "#desktop", mouseControls: true, touchControls: true, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, highlightColor: 0x4a90e2, midtoneColor: 0x0078d4, lowlightColor: 0x9b59b6, baseColor: 0x0d1117, blurFactor: 0.50, speed: 1.00, zoom: 1.00 } },
+            dots: { effect: 'DOTS', options: { el: "#desktop", mouseControls: true, touchControls: true, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, color: 0x4a90e2, backgroundColor: 0x0d1117, size: 2.00, spacing: 20.00 } },
+            aot: { effect: 'WAVES', options: { el: "#desktop", mouseControls: true, touchControls: true, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, color: 0xff0000, shininess: 40.00, waveHeight: 20.00, waveSpeed: 0.80, zoom: 0.7 } },
+            demon: { effect: 'FOG', options: { el: "#desktop", mouseControls: true, touchControls: true, gyroControls: false, minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00, highlightColor: 0xff7700, midtoneColor: 0xff0000, lowlightColor: 0x5500ff, baseColor: 0x0d1117, blurFactor: 0.50, speed: 1.50, zoom: 1.00 } },
+            custom: null
+        };
+        
+        function setWallpaper(themeName) {
+            if (vantaEffect) vantaEffect.destroy();
+            const theme = wallpaperThemes[themeName];
+            if (theme) {
+                vantaEffect = VANTA[theme.effect](theme.options);
+            } else {
+                document.getElementById('desktop').style.background = '#0d1117';
+            }
+            localStorage.setItem('kynay-os-wallpaper', themeName);
+        }
+
+        // --- CORE UI ELEMENTS ---
+        const desktop = document.getElementById('desktop');
+        const startButton = document.getElementById('start-button');
+        const startMenu = document.getElementById('start-menu');
+        const controlCenterBtn = document.getElementById('control-center-btn');
+        const controlCenter = document.getElementById('control-center');
+        const clockElement = document.getElementById('clock');
+        const widgetClock = document.getElementById('widget-clock-time');
+        const widgetDate = document.getElementById('widget-clock-date');
+        const taskbarAppsContainer = document.getElementById('taskbar-apps');
+        const shutdownBtn = document.getElementById('shutdown-btn');
+        const workspaceViewBtn = document.getElementById('workspace-view-btn');
+        const workspaceView = document.getElementById('workspace-view');
+        const screenshotBtn = document.getElementById('screenshot-btn');
+        const shortcutHelper = document.getElementById('shortcut-helper');
+        
+        // --- CLOCK ---
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const date = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            clockElement.innerHTML = `${time} <br> ${date}`;
+        }
+        
+        function updateWidgetClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const date = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            widgetClock.textContent = time;
+            widgetDate.textContent = date;
+        }
+        
+        setInterval(() => {
+            updateClock();
+            updateWidgetClock();
+        }, 1000);
+        updateClock();
+        updateWidgetClock();
+        
+        // --- System Monitor Simulation ---
+        function updateSystemMonitor() {
+            const cpuUsage = 30 + Math.floor(Math.random() * 40);
+            const ramUsage = 40 + Math.floor(Math.random() * 40);
+            const networkUsage = 20 + Math.floor(Math.random() * 30);
+            
+            document.getElementById('cpu-usage-value').textContent = `${cpuUsage}%`;
+            document.getElementById('cpu-usage-bar').style.width = `${cpuUsage}%`;
+            document.getElementById('ram-usage-value').textContent = `${ramUsage}%`;
+            document.getElementById('ram-usage-bar').style.width = `${ramUsage}%`;
+            document.getElementById('network-usage-value').textContent = `${networkUsage/10} MB/s`;
+            document.getElementById('network-usage-bar').style.width = `${networkUsage}%`;
+        }
+        setInterval(updateSystemMonitor, 3000);
+        updateSystemMonitor();
+
+        // --- PANEL TOGGLES (START MENU & CONTROL CENTER) ---
+        function togglePanel(panel) {
+            const isVisible = panel.classList.contains('show');
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
+            if (!isVisible) panel.classList.add('show');
+        }
+        
+        startButton.addEventListener('click', (e) => { e.stopPropagation(); togglePanel(startMenu); });
+        controlCenterBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePanel(controlCenter); });
+        workspaceViewBtn.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            workspaceView.classList.add('show');
+            updateWorkspaceThumbnails();
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!startMenu.contains(e.target) && !startButton.contains(e.target)) startMenu.classList.remove('show');
+            if (!controlCenter.contains(e.target) && !controlCenterBtn.contains(e.target)) controlCenter.classList.remove('show');
+        });
+        
+        workspaceView.addEventListener('click', (e) => {
+            if (e.target === workspaceView) {
+                workspaceView.classList.remove('show');
+            }
+        });
+        
+        startMenu.classList.add('panel');
+        controlCenter.classList.add('panel');
+        
+        // --- WORKSPACE MANAGEMENT ---
+        function switchWorkspace(index) {
+            // Hide all windows
+            document.querySelectorAll('.window').forEach(win => {
+                win.style.display = 'none';
+            });
+            
+            // Show windows in the new workspace
+            workspaces[index].forEach(appId => {
+                const winInfo = openWindows.get(appId);
+                if (winInfo && winInfo.element.style.display !== 'none') {
+                    winInfo.element.style.display = 'flex';
+                }
+            });
+            
+            // Update active workspace
+            currentWorkspace = index;
+            
+            // Update taskbar buttons
+            document.querySelectorAll('.workspace-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            
+            showNotification(`Beralih ke Workspace ${index + 1}`);
+        }
+        
+        function updateWorkspaceSwitcher() {
+            document.querySelectorAll('.workspace-btn').forEach((btn, i) => {
+                btn.textContent = i + 1;
+                btn.classList.toggle('active', i === currentWorkspace);
+                btn.onclick = () => switchWorkspace(i);
+            });
+        }
+        
+        function updateWorkspaceThumbnails() {
+            // This would capture thumbnails in a real system
+            // For simulation, we just show colored backgrounds
+        }
+        
+        // Initialize workspace switcher
+        updateWorkspaceSwitcher();
+        
+        // --- WINDOW MANAGEMENT ---
+        function focusWindow(windowEl) {
+            highestZIndex++;
+            windowEl.style.zIndex = highestZIndex;
+            document.querySelectorAll('.taskbar-app-icon').forEach(icon => icon.classList.remove('active'));
+            const appID = windowEl.dataset.appId;
+            const taskbarIcon = taskbarAppsContainer.querySelector(`[data-app-id="${appID}"]`);
+            if (taskbarIcon) taskbarIcon.classList.add('active');
+        }
+
+        function makeWindowDraggable(windowEl) {
+            const header = windowEl.querySelector('.window-header');
+            let isDragging = false, offsetX, offsetY, startX, startY;
+            
+            // Mouse events
+            header.addEventListener('mousedown', (e) => {
+                if (e.target.classList.contains('window-control')) return;
+                isDragging = true;
+                offsetX = e.clientX - windowEl.offsetLeft;
+                offsetY = e.clientY - windowEl.offsetTop;
+                startX = e.clientX;
+                startY = e.clientY;
+                focusWindow(windowEl);
+                document.body.style.cursor = 'grabbing';
+                e.preventDefault();
+            });
+            
+            // Touch events
+            header.addEventListener('touchstart', (e) => {
+                if (e.target.classList.contains('window-control')) return;
+                isDragging = true;
+                const touch = e.touches[0];
+                offsetX = touch.clientX - windowEl.offsetLeft;
+                offsetY = touch.clientY - windowEl.offsetTop;
+                startX = touch.clientX;
+                startY = touch.clientY;
+                focusWindow(windowEl);
+                e.preventDefault();
+            });
+            
+            // Mouse move
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const taskbarHeight = document.getElementById('taskbar').offsetHeight;
+                    let newX = e.clientX - offsetX;
+                    let newY = e.clientY - offsetY;
+                    
+                    // Boundary checks
+                    newX = Math.max(0, Math.min(newX, window.innerWidth - windowEl.offsetWidth));
+                    newY = Math.max(0, Math.min(newY, window.innerHeight - windowEl.offsetHeight - taskbarHeight - 20));
+                    
+                    windowEl.style.left = `${newX}px`;
+                    windowEl.style.top = `${newY}px`;
+                    
+                    // Show snap zones
+                    showSnapZones();
+                }
+            });
+            
+            // Touch move
+            document.addEventListener('touchmove', (e) => {
+                if (isDragging) {
+                    const touch = e.touches[0];
+                    const taskbarHeight = document.getElementById('taskbar').offsetHeight;
+                    let newX = touch.clientX - offsetX;
+                    let newY = touch.clientY - offsetY;
+                    
+                    // Boundary checks
+                    newX = Math.max(0, Math.min(newX, window.innerWidth - windowEl.offsetWidth));
+                    newY = Math.max(0, Math.min(newY, window.innerHeight - windowEl.offsetHeight - taskbarHeight - 20));
+                    
+                    windowEl.style.left = `${newX}px`;
+                    windowEl.style.top = `${newY}px`;
+                    e.preventDefault();
+                    
+                    // Show snap zones
+                    showSnapZones();
+                }
+            });
+            
+            // Mouse up
+            document.addEventListener('mouseup', () => { 
+                if (isDragging) {
+                    isDragging = false; 
+                    document.body.style.cursor = 'default'; 
+                    checkSnapPosition(windowEl);
+                    hideSnapZones();
+                }
+            });
+            
+            // Touch end
+            document.addEventListener('touchend', () => { 
+                if (isDragging) {
+                    isDragging = false; 
+                    checkSnapPosition(windowEl);
+                    hideSnapZones();
+                }
+            });
+        }
+        
+        // Window snapping function
+        function checkSnapPosition(windowEl) {
+            const snapThreshold = 50;
+            const winRect = windowEl.getBoundingClientRect();
+            const winWidth = winRect.width;
+            const winHeight = winRect.height;
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            const taskbarHeight = document.getElementById('taskbar').offsetHeight;
+            
+            // Hide all snap zones
+            hideSnapZones();
+            
+            // Check if window is near left edge
+            if (winRect.left < snapThreshold) {
+                windowEl.style.left = '0';
+                windowEl.style.top = '0';
+                windowEl.style.width = '50%';
+                windowEl.style.height = `calc(100% - ${taskbarHeight}px - 10px)`;
+                openWindows.get(windowEl.dataset.appId).maximized = false;
+            } 
+            // Check if window is near right edge
+            else if (winRect.right > screenWidth - snapThreshold) {
+                windowEl.style.left = '50%';
+                windowEl.style.top = '0';
+                windowEl.style.width = '50%';
+                windowEl.style.height = `calc(100% - ${taskbarHeight}px - 10px)`;
+                openWindows.get(windowEl.dataset.appId).maximized = false;
+            }
+            // Check if window is near top edge
+            else if (winRect.top < snapThreshold) {
+                windowEl.style.left = '0';
+                windowEl.style.top = '0';
+                windowEl.style.width = '100%';
+                windowEl.style.height = '50%';
+                openWindows.get(windowEl.dataset.appId).maximized = false;
+            }
+            // Check if window is near bottom edge
+            else if (winRect.bottom > screenHeight - taskbarHeight - 20 - snapThreshold) {
+                windowEl.style.left = '0';
+                windowEl.style.top = '50%';
+                windowEl.style.width = '100%';
+                windowEl.style.height = '50%';
+                openWindows.get(windowEl.dataset.appId).maximized = false;
+            }
+            // Check if window is near top left corner
+            else if (winRect.left < snapThreshold && winRect.top < snapThreshold) {
+                windowEl.style.left = '0';
+                windowEl.style.top = '0';
+                windowEl.style.width = '50%';
+                windowEl.style.height = '50%';
+                openWindows.get(windowEl.dataset.appId).maximized = false;
+            }
+            // Check if window is near top right corner
+            else if (winRect.right > screenWidth - snapThreshold && winRect.top < snapThreshold) {
+                windowEl.style.left = '50%';
+                windowEl.style.top = '0';
+                windowEl.style.width = '50%';
+                windowEl.style.height = '50%';
+                openWindows.get(windowEl.dataset.appId).maximized = false;
+            }
+            // Check if window is near bottom left corner
+            else if (winRect.left < snapThreshold && winRect.bottom > screenHeight - taskbarHeight - 20 - snapThreshold) {
+                windowEl.style.left = '0';
+                windowEl.style.top = '50%';
+                windowEl.style.width = '50%';
+                windowEl.style.height = '50%';
+                openWindows.get(windowEl.dataset.appId).maximized = false;
+            }
+            // Check if window is near bottom right corner
+            else if (winRect.right > screenWidth - snapThreshold && winRect.bottom > screenHeight - taskbarHeight - 20 - snapThreshold) {
+                windowEl.style.left = '50%';
+                windowEl.style.top = '50%';
+                windowEl.style.width = '50%';
+                windowEl.style.height = '50%';
+                openWindows.get(windowEl.dataset.appId).maximized = false;
+            }
+        }
+        
+        // Show snap zones
+        function showSnapZones() {
+            document.querySelectorAll('.snap-zone').forEach(zone => {
+                zone.style.display = 'block';
+                setTimeout(() => {
+                    zone.classList.add('active');
+                }, 10);
+            });
+        }
+        
+        // Hide snap zones
+        function hideSnapZones() {
+            document.querySelectorAll('.snap-zone').forEach(zone => {
+                zone.classList.remove('active');
+                setTimeout(() => {
+                    zone.style.display = 'none';
+                }, 300);
+            });
+        }
+
+        // --- APP LAUNCHER ---
+        document.querySelectorAll('.desktop-icon, .start-menu-item').forEach(launcher => {
+            const eventType = launcher.classList.contains('desktop-icon') ? 'dblclick' : 'click';
+            launcher.addEventListener(eventType, () => {
+                createWindow(launcher.dataset.app);
+                startMenu.classList.remove('show');
+            });
+        });
+        
+        // --- WINDOW & APP CREATION ---
+        function createWindow(appId, initialContent = '') {
+            if (openWindows.has(appId)) {
+                const existingWindow = openWindows.get(appId).element;
+                if (existingWindow.style.display === 'none') toggleMinimize(existingWindow, appId);
+                focusWindow(existingWindow);
+                return existingWindow;
+            }
+            
+            const template = document.getElementById('window-template');
+            const newWindow = template.content.cloneNode(true).firstElementChild;
+            newWindow.dataset.appId = appId;
+            
+            const appConfig = getAppConfig(appId);
+            newWindow.querySelector('.window-title').textContent = appConfig.title;
+            
+            const windowBody = newWindow.querySelector('.window-body');
+            windowBody.innerHTML = initialContent || appConfig.content;
+            windowBody.classList.add('app-content', appId);
+            
+            newWindow.style.width = appConfig.width || '550px';
+            newWindow.style.height = appConfig.height || '450px';
+            newWindow.style.top = `${Math.random() * 50 + 50}px`;
+            newWindow.style.left = `${Math.random() * 150 + 100}px`;
+            
+            desktop.appendChild(newWindow);
+            makeWindowDraggable(newWindow);
+            
+            newWindow.querySelector('#close-btn').addEventListener('click', () => closeWindow(newWindow, appId));
+            newWindow.querySelector('#minimize-btn').addEventListener('click', () => toggleMinimize(newWindow, appId));
+            newWindow.querySelector('#maximize-btn').addEventListener('click', () => toggleMaximize(newWindow));
+            
+            openWindows.set(appId, { element: newWindow, maximized: false, workspace: currentWorkspace });
+            workspaces[currentWorkspace].push(appId);
+            
+            createTaskbarIcon(appId, appConfig.icon, newWindow);
+            focusWindow(newWindow);
+            
+            // Initialize app-specific functionality
+            if (appId === 'browser') initBrowser(newWindow);
+            if (appId === 'terminal') initTerminal(newWindow);
+            if (appId === 'calculator') initCalculator(newWindow);
+            if (appId === 'music') initMusicPlayer(newWindow);
+            if (appId === 'chatbot') initChatbot(newWindow);
+            if (appId === 'word-editor') initWordEditor(newWindow);
+            if (appId === 'spreadsheet') initSpreadsheet(newWindow);
+            if (appId === 'file-explorer') initFileExplorer(newWindow);
+            if (appId === 'task-manager') initTaskManager(newWindow);
+            if (appId === 'app-store') initAppStore(newWindow);
+            if (appId === 'system-info') initSystemMonitor(newWindow);
+            if (appId === 'theme-editor') initThemeEditor(newWindow);
+            if (appId === 'code-editor') initCodeEditor(newWindow);
+            if (appId === 'screenshot') initScreenshotTool(newWindow);
+            if (appId === 'notepad') initNotepad(newWindow);
+            if (appId === 'mail') initMail(newWindow);
+            if (appId === 'calendar') initCalendar(newWindow);
+            if (appId === 'notes') initNotes(newWindow);
+            if (appId === 'pdf') initPdfViewer(newWindow);
+            
+            newWindow.addEventListener('mousedown', () => focusWindow(newWindow));
+            newWindow.addEventListener('touchstart', () => focusWindow(newWindow));
+            
+            return newWindow;
+        }
+
+        // --- APP CONFIGURATION (with full logic) ---
+        function getAppConfig(appId) {
+            const configs = {
+                notepad: { 
+                    title: 'Notepad', 
+                    icon: 'fa-file-alt', 
+                    width: '450px', 
+                    height: '500px', 
+                    content: `<textarea placeholder="Tulis sesuatu di sini..."></textarea>
+                    <div style="position:absolute;bottom:10px;right:10px;display:flex;gap:5px;">
+                        <button id="save-notepad" style="background:var(--accent-color-primary);color:white;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;">Save</button>
+                    </div>` 
+                },
+                'word-editor': { 
+                    title: 'Kynay Write', 
+                    icon: 'fa-file-word', 
+                    width: '650px', 
+                    height: '550px', 
+                    content: `<div class="word-editor-toolbar">
+                        <button data-command="bold"><i class="fas fa-bold"></i></button>
+                        <button data-command="italic"><i class="fas fa-italic"></i></button>
+                        <button data-command="underline"><i class="fas fa-underline"></i></button>
+                        <button id="save-txt-btn"><i class="fas fa-save"></i> .txt</button>
+                        <button id="save-html-btn"><i class="fas fa-save"></i> .html</button>
+                    </div>
+                    <div class="word-editor-content" contenteditable="true" spellcheck="false"><p>Mulai menulis...</p></div>` 
+                },
+                spreadsheet: { 
+                    title: 'Kynay Sheet', 
+                    icon: 'fa-file-excel', 
+                    width: '700px', 
+                    height: '500px', 
+                    content: `<div class="spreadsheet-controls">
+                        <button id="export-csv-btn"><i class="fas fa-file-csv"></i> Ekspor CSV</button>
+                    </div>
+                    <div class="spreadsheet-container"><table class="spreadsheet-table"></table></div>` 
+                },
+                'file-explorer': { 
+                    title: 'FileSaya', 
+                    icon: 'fa-folder', 
+                    width: '600px', 
+                    height: '500px', 
+                    content: `<div class="explorer-path">
+                        <i class="fas fa-hdd"></i><span id="current-path">/</span>
+                        <div style="margin-left:auto;display:flex;gap:5px;">
+                            <button id="new-folder-btn"><i class="fas fa-folder-plus"></i></button>
+                            <button id="delete-file-btn"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="file-explorer-grid"></div>` 
+                },
+                'task-manager': { 
+                    title: 'Manajer Tugas', 
+                    icon: 'fa-list-check', 
+                    width: '450px', 
+                    height: '400px', 
+                    content: `<h3>Aplikasi Berjalan</h3><ul class="task-list"></ul>
+                    <div style="padding:10px;display:flex;justify-content:space-between;">
+                        <button id="minimize-all-btn">Minimize All</button>
+                        <button id="close-all-btn">Close All</button>
+                    </div>` 
+                },
+                browser: { 
+                    title: 'Web Browser', 
+                    icon: 'fa-globe', 
+                    width: '800px', 
+                    height: '600px', 
+                    content: `<div class="browser-nav">
+                        <input type="text" value="https://www.google.com/webhp?igu=1" placeholder="Masukkan URL" id="browser-url">
+                        <button id="browser-go">Go</button>
+                    </div>
+                    <iframe class="browser-content" sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts" src="https://www.google.com/webhp?igu=1&igu=1"></iframe>` 
+                },
+                terminal: { 
+                    title: 'Terminal', 
+                    icon: 'fa-terminal', 
+                    width: '600px', 
+                    height: '400px', 
+                    content: `<div class="terminal-output">
+                        <div>Kynay OS Terminal v2.0 - Supreme Edition</div>
+                        <div>Ketik 'help' untuk daftar perintah</div><br>
+                    </div>
+                    <div class="terminal-input-line">
+                        <span class="terminal-prompt">KynayOS> </span>
+                        <input type="text" class="terminal-input" autofocus>
+                    </div>` 
+                },
+                about: { 
+                    title: 'Tentang Kynay OS', 
+                    icon: 'fa-circle-info', 
+                    width: '450px', 
+                    height: '450px', 
+                    content: `<div class="about">
+                        <i class="fa-solid fa-bolt" style="font-size: 64px; margin-bottom: 20px; color: var(--accent-color-primary);"></i>
+                        <h3>Kynay OS</h3>
+                        <p>Supreme Edition "Aether"</p>
+                        <p>Versi: 2.0.0</p>
+                        <p>Dibuat oleh: <span style="font-weight: bold; color: var(--accent-color-primary);">Farhan Kertadiwangsa</span></p>
+                        <p style="margin-top: 15px;">&copy; 2025</p>
+                        <div class="os-version">OS Build 2025.07.05.01</div>
+                    </div>` 
+                },
+                calculator: { 
+                    title: 'Kalkulator', 
+                    icon: 'fa-calculator', 
+                    width: '320px', 
+                    height: '450px', 
+                    content: `<div class="calc-display">0</div>
+                    <div class="calc-buttons">
+                        <button class="calc-button operator">C</button>
+                        <button class="calc-button operator">()</button>
+                        <button class="calc-button operator">%</button>
+                        <button class="calc-button operator">/</button>
+                        <button class="calc-button">7</button>
+                        <button class="calc-button">8</button>
+                        <button class="calc-button">9</button>
+                        <button class="calc-button operator">*</button>
+                        <button class="calc-button">4</button>
+                        <button class="calc-button">5</button>
+                        <button class="calc-button">6</button>
+                        <button class="calc-button operator">-</button>
+                        <button class="calc-button">1</button>
+                        <button class="calc-button">2</button>
+                        <button class="calc-button">3</button>
+                        <button class="calc-button operator">+</button>
+                        <button class="calc-button" style="grid-column: span 2;">0</button>
+                        <button class="calc-button">.</button>
+                        <button class="calc-button operator">=</button>
+                    </div>` 
+                },
+                music: { 
+                    title: 'Pemutar Musik', 
+                    icon: 'fa-music', 
+                    width: '300px', 
+                    height: '350px', 
+                    content: `<div class="music-info" style="text-align:center; padding: 20px;">
+                        <h4>Stargazing</h4>
+                        <p>Anonymous Artist</p>
+                        <button id="play-pause-btn" style="font-size:2em; background:none; border:none; color: var(--font-color); cursor:pointer; margin-top:15px;">
+                            <i class="fas fa-play"></i>
+                        </button>
+                    </div>
+                    <audio id="audio-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" loop></audio>`
+                },
+                gallery: { 
+                    title: 'Galeri Gambar', 
+                    icon: 'fa-images', 
+                    width: '550px', 
+                    height: '450px', 
+                    content: `<p style="padding:20px; text-align:center;">Buka file gambar dari FileSaya untuk melihatnya di sini.</p>` 
+                },
+                chatbot: { 
+                    title: 'Chatbot AI', 
+                    icon: 'fa-comments', 
+                    width: '400px', 
+                    height: '500px', 
+                    content: `<div class="chatbot-messages"></div>
+                    <div class="chatbot-input-area">
+                        <input type="text" class="chatbot-input" placeholder="Ketik pesan..." id="chatbot-input">
+                        <button class="chatbot-send-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>` 
+                },
+                'app-store': { 
+                    title: 'App Store', 
+                    icon: 'fa-store', 
+                    width: '700px', 
+                    height: '500px', 
+                    content: `<h3 style="padding: 15px 15px 5px;">App Store</h3>
+                    <div class="app-store-grid"></div>` 
+                },
+                'system-info': { 
+                    title: 'System Info', 
+                    icon: 'fa-gauge', 
+                    width: '500px', 
+                    height: '450px', 
+                    content: `<div class="system-info-grid">
+                        <div class="system-info-card">
+                            <h4>System Information</h4>
+                            <p><b>OS:</b> Kynay OS Supreme Edition</p>
+                            <p><b>Version:</b> 2.0.0</p>
+                            <p><b>Build:</b> 2025.07.05.01</p>
+                            <p><b>Architecture:</b> x64</p>
+                        </div>
+                        <div class="system-info-card">
+                            <h4>Hardware</h4>
+                            <p><b>CPU:</b> Intel Core i9-13900K (Simulated)</p>
+                            <p><b>RAM:</b> 32GB DDR5 (Simulated)</p>
+                            <p><b>GPU:</b> NVIDIA RTX 4090 (Simulated)</p>
+                            <p><b>Storage:</b> 2TB SSD (Simulated)</p>
+                        </div>
+                        <div class="system-info-card">
+                            <h4>CPU Usage</h4>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-value" id="sys-cpu-bar" style="width: 45%"></div>
+                                </div>
+                                <div id="sys-cpu-value">45%</div>
+                            </div>
+                        </div>
+                        <div class="system-info-card">
+                            <h4>Memory Usage</h4>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-value" id="sys-ram-bar" style="width: 65%"></div>
+                                </div>
+                                <div id="sys-ram-value">21.5GB/32GB (65%)</div>
+                            </div>
+                        </div>
+                    </div>` 
+                },
+                'theme-editor': { 
+                    title: 'Theme Editor', 
+                    icon: 'fa-palette', 
+                    width: '500px', 
+                    height: '500px', 
+                    content: `<div class="theme-editor">
+                        <div class="theme-preview">
+                            <div class="theme-preview-header">Preview Window</div>
+                            <div class="theme-preview-content">
+                                <p>Ini adalah pratinjau tema Anda</p>
+                            </div>
+                        </div>
+                        <div class="theme-controls">
+                            <div class="theme-control">
+                                <label>Warna Utama</label>
+                                <input type="color" id="theme-primary" value="#0078d4">
+                            </div>
+                            <div class="theme-control">
+                                <label>Warna Latar</label>
+                                <input type="color" id="theme-bg" value="#1e1e1e">
+                            </div>
+                            <div class="theme-control">
+                                <label>Warna Header</label>
+                                <input type="color" id="theme-header" value="#282828">
+                            </div>
+                        </div>
+                        <div class="theme-editor-controls">
+                            <button id="apply-theme">Terapkan</button>
+                            <button id="save-theme">Simpan</button>
+                        </div>
+                    </div>` 
+                },
+                'code-editor': { 
+                    title: 'Kynay Code', 
+                    icon: 'fa-code', 
+                    width: '700px', 
+                    height: '500px', 
+                    content: `<div class="code-editor-container">
+                        <div class="code-editor-toolbar">
+                            <button id="new-file-btn">New</button>
+                            <button id="open-file-btn">Open</button>
+                            <button id="save-file-btn">Save</button>
+                            <select id="file-type">
+                                <option value="html">HTML</option>
+                                <option value="css">CSS</option>
+                                <option value="js">JavaScript</option>
+                            </select>
+                        </div>
+                        <textarea id="code-editor" placeholder="// Tulis kode Anda di sini..."></textarea>
+                    </div>` 
+                },
+                'screenshot': { 
+                    title: 'Screenshot Tool', 
+                    icon: 'fa-camera', 
+                    width: '400px', 
+                    height: '450px', 
+                    content: `<div class="screenshot-container">
+                        <h3>Ambil Tangkapan Layar</h3>
+                        <p>Tangkap seluruh desktop atau jendela aktif</p>
+                        <div class="screenshot-preview">
+                            Pratinjau akan muncul di sini
+                        </div>
+                        <div class="recorder-controls">
+                            <button class="recorder-btn" id="capture-full">Tangkap Desktop</button>
+                            <button class="recorder-btn" id="capture-window">Tangkap Jendela</button>
+                            <button class="recorder-btn" id="capture-area">Tangkap Area</button>
+                        </div>
+                    </div>` 
+                },
+                'mail': { 
+                    title: 'Email Client', 
+                    icon: 'fa-envelope', 
+                    width: '700px', 
+                    height: '500px', 
+                    content: `<div class="app-content-mail">
+                        <div class="mail-sidebar">
+                            <button class="mail-compose-btn"><i class="fas fa-pen"></i> Tulis Baru</button>
+                            <ul>
+                                <li class="active"><i class="fas fa-inbox"></i> Inbox <span class="mail-count">3</span></li>
+                                <li><i class="fas fa-paper-plane"></i> Sent</li>
+                                <li><i class="fas fa-trash"></i> Trash</li>
+                            </ul>
+                        </div>
+                        <div class="mail-list">
+                            <div class="mail-item">
+                                <div class="mail-sender">Tim Kynay OS</div>
+                                <div class="mail-subject">Selamat Datang!</div>
+                                <div class="mail-preview">Terima kasih telah menggunakan Kynay OS Supreme...</div>
+                            </div>
+                            <div class="mail-item">
+                                <div class="mail-sender">Pemberitahuan Sistem</div>
+                                <div class="mail-subject">Pembaruan Tersedia</div>
+                                <div class="mail-preview">Versi baru dari Kynay OS sekarang tersedia untuk...</div>
+                            </div>
+                            <div class="mail-item">
+                                <div class="mail-sender">John Doe</div>
+                                <div class="mail-subject">Laporan Kuartal</div>
+                                <div class="mail-preview">Berikut adalah laporan kuartal yang Anda minta...</div>
+                            </div>
+                        </div>
+                    </div>`
+                },
+                'calendar': { 
+                    title: 'Kalender', 
+                    icon: 'fa-calendar', 
+                    width: '600px', 
+                    height: '500px', 
+                    content: `<div class="app-content-calendar">
+                        <div class="calendar-header">
+                            <button id="cal-prev"><i class="fas fa-chevron-left"></i></button>
+                            <h3 id="cal-month-year"></h3>
+                            <button id="cal-next"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <div class="calendar-weekdays">
+                            <div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
+                        </div>
+                        <div class="calendar-days"></div>
+                    </div>`
+                },
+                'video': { 
+                    title: 'Pemutar Video', 
+                    icon: 'fa-film', 
+                    width: '650px', 
+                    height: '500px', 
+                    content: `<div style="padding:20px;text-align:center;">
+                        <h3>Kynay Video Player</h3>
+                        <p>Putar file video dari FileSaya</p>
+                        <div class="loading-spinner"></div>
+                    </div>`
+                },
+                'recorder': { 
+                    title: 'Perekam Suara', 
+                    icon: 'fa-microphone', 
+                    width: '500px', 
+                    height: '400px', 
+                    content: `<div style="padding:20px;text-align:center;">
+                        <h3>Kynay Audio Recorder</h3>
+                        <p>Rekam dan edit audio</p>
+                        <div class="loading-spinner"></div>
+                    </div>`
+                },
+                'notes': { 
+                    title: 'Catatan', 
+                    icon: 'fa-sticky-note', 
+                    width: '400px', 
+                    height: '450px', 
+                    content: `<div class="app-content-notes">
+                        <textarea class="notes-textarea" placeholder="Tulis catatan Anda di sini..."></textarea>
+                        <button class="notes-save-btn"><i class="fas fa-save"></i> Simpan Catatan</button>
+                    </div>`
+                },
+                'settings': { 
+                    title: 'Pengaturan', 
+                    icon: 'fa-cog', 
+                    width: '700px', 
+                    height: '550px', 
+                    content: `<div style="padding:20px;text-align:center;">
+                        <h3>System Settings</h3>
+                        <p>Konfigurasi sistem Kynay OS</p>
+                        <div class="loading-spinner"></div>
+                    </div>`
+                },
+                'photo': { 
+                    title: 'Penampil Foto', 
+                    icon: 'fa-image', 
+                    width: '600px', 
+                    height: '500px', 
+                    content: `<div style="padding:20px;text-align:center;">
+                        <h3>Kynay Photo Viewer</h3>
+                        <p>Lihat dan edit gambar</p>
+                        <div class="loading-spinner"></div>
+                    </div>`
+                },
+                'pdf': { 
+                    title: 'Penampil PDF', 
+                    icon: 'fa-file-pdf', 
+                    width: '600px', 
+                    height: '500px', 
+                    content: `<div class="app-content-pdf">
+                        <div class="pdf-toolbar">
+                            <button id="pdf-upload-btn"><i class="fas fa-upload"></i> Buka File PDF</button>
+                            <span id="pdf-filename">Tidak ada file yang dipilih.</span>
+                        </div>
+                        <div id="pdf-viewer" class="pdf-viewer-placeholder">
+                            <i class="fas fa-file-pdf"></i>
+                            <p>Pratinjau PDF akan muncul di sini</p>
+                        </div>
+                        <input type="file" id="pdf-file-input" accept="application/pdf" style="display: none;">
+                    </div>`
+                },
+                'recycle': { 
+                    title: 'Tempat Sampah', 
+                    icon: 'fa-trash', 
+                    width: '500px', 
+                    height: '450px', 
+                    content: `<div style="padding:20px;text-align:center;">
+                        <h3>Recycle Bin</h3>
+                        <p>File yang dihapus</p>
+                        <div class="loading-spinner"></div>
+                    </div>`
+                }
+            };
+            return configs[appId];
+        }
+
+        function closeWindow(windowEl, appId) {
+            windowEl.classList.add('closing');
+            setTimeout(() => {
+                windowEl.dispatchEvent(new CustomEvent('removed'));
+                windowEl.remove();
+                openWindows.delete(appId);
+                removeTaskbarIcon(appId);
+                
+                // Remove from workspace
+                for (let i = 0; i < workspaces.length; i++) {
+                    const index = workspaces[i].indexOf(appId);
+                    if (index !== -1) {
+                        workspaces[i].splice(index, 1);
+                    }
+                }
+            }, ANIMATION_DURATION);
+        }
+        
+        function toggleMinimize(windowEl, appId) {
+            const taskbarIcon = taskbarAppsContainer.querySelector(`[data-app-id="${appId}"]`);
+            if (windowEl.style.display === 'none') {
+                windowEl.style.display = 'flex';
+                focusWindow(windowEl);
+            } else {
+                windowEl.classList.add('minimized');
+                setTimeout(() => {
+                    windowEl.style.display = 'none';
+                    windowEl.classList.remove('minimized');
+                    taskbarIcon.classList.remove('active');
+                }, ANIMATION_DURATION);
+            }
+        }
+
+        let lastPositions = {};
+        function toggleMaximize(windowEl) {
+            const appId = windowEl.dataset.appId;
+            const state = openWindows.get(appId);
+            const taskbarHeight = document.getElementById('taskbar').offsetHeight;
+            
+            if (state.maximized) {
+                Object.assign(windowEl.style, lastPositions[appId]);
+                state.maximized = false;
+            } else {
+                lastPositions[appId] = { 
+                    top: windowEl.style.top, 
+                    left: windowEl.style.left, 
+                    width: windowEl.style.width, 
+                    height: windowEl.style.height 
+                };
+                Object.assign(windowEl.style, { 
+                    top: '0', 
+                    left: '0', 
+                    width: '100vw', 
+                    height: `calc(100vh - ${taskbarHeight}px - 10px)` 
+                });
+                state.maximized = true;
+            }
+        }
+
+        function createTaskbarIcon(appId, iconClass, windowEl) {
+            const icon = document.createElement('div');
+            icon.className = `taskbar-app-icon`;
+            icon.dataset.appId = appId;
+            icon.title = getAppConfig(appId).title;
+            
+            const iconElement = document.createElement('i');
+            iconElement.className = `fas ${iconClass}`;
+            icon.appendChild(iconElement);
+            
+            icon.addEventListener('click', () => {
+                const isMinimized = windowEl.style.display === 'none';
+                if (!isMinimized && icon.classList.contains('active')) {
+                    toggleMinimize(windowEl, appId);
+                } else {
+                    if (isMinimized) toggleMinimize(windowEl, appId);
+                    focusWindow(windowEl);
+                }
+            });
+            
+            // Context menu for taskbar icon
+            icon.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                showContextMenu(e.clientX, e.clientY, 'taskbar', appId);
+            });
+            
+            taskbarAppsContainer.appendChild(icon);
+            return icon;
+        }
+
+        function removeTaskbarIcon(appId) {
+            const icon = taskbarAppsContainer.querySelector(`[data-app-id="${appId}"]`);
+            if (icon) icon.remove();
+        }
+        
+        // --- APP-SPECIFIC LOGIC (FULL IMPLEMENTATION) ---
+        function initBrowser(w) { 
+            const i=w.querySelector('#browser-url'),b=w.querySelector('#browser-go'),f=w.querySelector('iframe'); 
+            function n(){
+                let u=i.value.trim();
+                if(!u.startsWith('http')) u='https://'+u;
+                f.src=u;
+            } 
+            b.addEventListener('click',n); 
+            i.addEventListener('keydown',(e)=>{if(e.key==='Enter')n();}); 
+        }
+        
+        function initTerminal(w) {
+            const o=w.querySelector('.terminal-output'),i=w.querySelector('.terminal-input');
+            i.addEventListener('keydown',(e)=>{
+                if(e.key==='Enter'){
+                    const c=i.value.trim();
+                    const l=document.createElement('div');
+                    l.innerHTML=`<span class="terminal-prompt">KynayOS> </span>${c}`;
+                    o.appendChild(l);
+                    handleTerminalCommand(c,o);
+                    i.value='';
+                    o.scrollTop=o.scrollHeight;
+                }
+            }); 
+            i.focus();
+        }
+        
+        function handleTerminalCommand(command, out) {
+            const args=command.split(' '),cmd=args[0].toLowerCase();
+            let r='';
+            switch(cmd){
+                case 'help':
+                    r=`Perintah yang tersedia:
+help - Tampilkan bantuan
+date - Tampilkan tanggal dan waktu
+about - Info tentang OS
+echo [teks] - Tampilkan teks
+calc [ekspresi] - Kalkulator
+clear - Bersihkan terminal
+apps - Tampilkan aplikasi berjalan
+ls - Daftar file (simulasi)
+cd [folder] - Ganti direktori
+mkdir [nama] - Buat folder baru
+cat [file] - Tampilkan isi file
+ping [host] - Ping host
+sudo [perintah] - Perintah admin
+nano [file] - Buka editor teks`;
+                    break;
+                case 'date':r=new Date().toLocaleString('id-ID');break;
+                case 'about':r='Kynay OS Supreme Edition "Aether" - by Farhan Kertadiwangsa';break;
+                case 'echo':r=args.slice(1).join(' ');break;
+                case 'calc':
+                    try {
+                        r=`Hasil: ${eval(args.slice(1).join('').replace(/[^-()\d/*+.]/g,''))}`;
+                    } catch(e) {
+                        r=`Ekspresi tidak valid`;
+                    }
+                    break;
+                case 'clear':out.innerHTML='';return;
+                case 'apps':r=openWindows.size===0?"Tidak ada aplikasi berjalan.":"Aplikasi berjalan:<br>"+[...openWindows.keys()].join('<br>');break;
+                case 'ls':r='Documents  Music  Pictures  Downloads  Desktop';break;
+                case 'cd':
+                    if (args.length < 2) {
+                        r = 'Usage: cd [folder]';
+                    } else {
+                        r = `Direktori berubah ke ${args[1]}`;
+                    }
+                    break;
+                case 'mkdir':
+                    if (args.length < 2) {
+                        r = 'Usage: mkdir [folder-name]';
+                    } else {
+                        r = `Folder '${args[1]}' berhasil dibuat`;
+                    }
+                    break;
+                case 'cat':
+                    if (args.length < 2) {
+                        r = 'Usage: cat [filename]';
+                    } else {
+                        r = `Isi file ${args[1]}: Ini adalah konten simulasi file`;
+                    }
+                    break;
+                case 'ping':
+                    if (args.length < 2) {
+                        r = 'Usage: ping [host]';
+                    } else {
+                        r = `Pinging ${args[1]} with 32 bytes of data:
+Reply from ${args[1]}: bytes=32 time=15ms TTL=55
+Reply from ${args[1]}: bytes=32 time=18ms TTL=55
+Reply from ${args[1]}: bytes=32 time=12ms TTL=55
+Reply from ${args[1]}: bytes=32 time=20ms TTL=55
+
+Ping statistics for ${args[1]}:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),
+Approximate round trip times in milli-seconds:
+    Minimum = 12ms, Maximum = 20ms, Average = 16ms`;
+                    }
+                    break;
+                case 'sudo':
+                    if (args[1] === 'reboot') {
+                        r='Memulai ulang sistem...';
+                        setTimeout(() => {
+                            document.location.reload();
+                        }, 2000);
+                    } else {
+                        r=`Perintah sudo tidak didukung: ${args.slice(1).join(' ')}`;
+                    }
+                    break;
+                case 'nano':
+                    if (args.length < 2) {
+                        r = 'Usage: nano [filename]';
+                    } else {
+                        const win = createWindow('notepad');
+                        win.querySelector('.window-title').textContent = args[1];
+                        win.querySelector('textarea').value = '';
+                        r = `Membuka editor untuk ${args[1]}`;
+                    }
+                    break;
+                default:r=`Perintah tidak ditemukan: '${cmd}'`;
+            }
+            const resEl=document.createElement('div');
+            resEl.innerHTML=r;
+            out.appendChild(resEl);
+            out.appendChild(document.createElement('br'));
+        }
+        
+        function initCalculator(w) {
+            const d=w.querySelector('.calc-display'),b=w.querySelector('.calc-buttons');
+            let c='0',o=null,p=null,rs=false;
+            
+            b.addEventListener('click',e=>{
+                if(!e.target.matches('button')) return;
+                const k=e.target.textContent;
+                
+                if(!isNaN(k)||k==='.'){
+                    if(rs){ c=k==='.'?'0.':k; rs=false; }
+                    else{ 
+                        if(c==='0'&&k!=='.') c=k;
+                        else if(k==='.'&&c.includes('.')) return;
+                        else c+=k;
+                    }
+                } else if(k==='C'){ 
+                    c='0'; o=null; p=null; rs=false; 
+                } else if(k==='='){
+                    if(o&&p!==null){
+                        try{ c=String(eval(`${p} ${o} ${c}`)) }
+                        catch{ c='Error' }
+                        o=null; p=null; rs=true;
+                    }
+                } else {
+                    if(p!==null&&o&&!rs){
+                        try{ c=String(eval(`${p} ${o} ${c}`)) }
+                        catch{ c='Error' }
+                        d.textContent=c;
+                    }
+                    o=k; p=c; rs=true;
+                }
+                d.textContent=c;
+            });
+        }
+        
+        function initMusicPlayer(w) {
+            const a=w.querySelector('#audio-player'),p=w.querySelector('#play-pause-btn'),i=p.querySelector('i');
+            p.addEventListener('click',()=>{
+                if(a.paused){ a.play(); i.className='fas fa-pause' }
+                else{ a.pause(); i.className='fas fa-play' }
+            });
+        }
+        
+        function initChatbot(w) {
+            const m=w.querySelector('.chatbot-messages'),i=w.querySelector('#chatbot-input'),s=w.querySelector('.chatbot-send-btn');
+            
+            function a(t,d){
+                const e=document.createElement('div');
+                e.className=`chatbot-message ${d}`;
+                e.textContent=t;
+                m.appendChild(e);
+                m.scrollTop=m.scrollHeight;
+            }
+            
+            async function n(){
+                const t=i.value.trim();
+                if(t==='') return;
+                a(t,'user');
+                i.value='';
+                
+                try {
+                    // Simulated AI responses with API call to a dummy service
+                    const response = await fetch('https://api.quotable.io/random');
+                    const data = await response.json();
+                    a(data.content, 'ai');
+                } catch(e) {
+                    // Fallback static responses
+                    const responses = [
+                        "Halo! Ada yang bisa saya bantu?",
+                        "Saya adalah chatbot Kynay OS. Sistem operasi ini dibuat oleh Farhan Kertadiwangsa.",
+                        "Kynay OS adalah sistem operasi virtual berbasis web yang menggabungkan fitur Windows, macOS, dan Linux.",
+                        "Anda dapat mencoba berbagai aplikasi dengan membukanya dari menu Start atau desktop.",
+                        "Fitur apa yang ingin Anda ketahui lebih lanjut?"
+                    ];
+                    const response = responses[Math.floor(Math.random() * responses.length)];
+                    a(response, 'ai');
+                }
+            }
+            
+            s.addEventListener('click',n);
+            i.addEventListener('keydown',e=>{if(e.key==='Enter')n()});
+            a('Halo! Saya Chatbot Kynay OS. Ada yang bisa saya bantu?','ai');
+        }
+        
+        function initWordEditor(w) {
+            const c=w.querySelector('.word-editor-content'),t=w.querySelector('.word-editor-toolbar'),st=w.querySelector('#save-txt-btn'),sh=w.querySelector('#save-html-btn');
+            
+            t.addEventListener('click',e=>{
+                const b=e.target.closest('button');
+                if(!b) return;
+                const o=b.dataset.command;
+                if(o) document.execCommand(o,false,null);
+                c.focus();
+            });
+            
+            st.addEventListener('click',()=>{
+                downloadBlob(c.innerText,'dokumen.txt','text/plain');
+            });
+            
+            sh.addEventListener('click',()=>{
+                downloadBlob(`<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>${c.innerHTML}</body></html>`,'dokumen.html','text/html');
+            });
+        }
+        
+        function initSpreadsheet(w) {
+            const t=w.querySelector('.spreadsheet-table'),e=w.querySelector('#export-csv-btn'),R=10,C=8;
+            
+            function cs(){
+                t.innerHTML='';
+                const h=t.createTHead().insertRow();
+                h.insertCell();
+                for(let j=0;j<C;j++) {
+                    const th = h.insertCell();
+                    th.textContent=String.fromCharCode(65+j);
+                    th.style.fontWeight = 'bold';
+                }
+                
+                const b=t.createTBody();
+                for(let i=0;i<R;i++){
+                    const r=b.insertRow();
+                    const indexCell = r.insertCell();
+                    indexCell.textContent=i+1;
+                    indexCell.style.fontWeight = 'bold';
+                    
+                    for(let j=0;j<C;j++){
+                        const c=r.insertCell();
+                        c.contentEditable=true;
+                    }
+                }
+            }
+            
+            e.addEventListener('click',()=>{
+                let csv='';
+                for(let i=0;i<t.rows.length;i++){
+                    let rowData=[];
+                    for(let j=0;j<t.rows[i].cells.length;j++){
+                        rowData.push(`"${t.rows[i].cells[j].textContent}"`);
+                    }
+                    csv+=rowData.join(',')+"\n";
+                }
+                downloadBlob(csv,'spreadsheet.csv','text/csv');
+            });
+            
+            cs();
+        }
+        
+        function initFileExplorer(w) {
+            const g=w.querySelector('.file-explorer-grid'),p=w.querySelector('#current-path'),nf=w.querySelector('#new-folder-btn'),df=w.querySelector('#delete-file-btn');
+            const fs={
+                'root':[
+                    {name:'Dokumen',type:'folder',content:[
+                        {name:'Laporan.txt',type:'file',app:'notepad',content:'Ini contoh dokumen.'},
+                        {name:'Presentasi.html',type:'file',app:'word-editor',content:'<h1>Judul</h1><p>Isi.</p>'},
+                        {name:'Script.js',type:'file',app:'code-editor',content:'console.log("Hello Kynay OS");'}
+                    ]},
+                    {name:'Musik',type:'folder',content:[
+                        {name:'Song1.mp3',type:'file',app:'music',content:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'}
+                    ]},
+                    {name:'Gambar',type:'folder',content:[
+                        {name:'Pemandangan.jpg',type:'file',app:'gallery',content:'https://picsum.photos/800/600?random=1'},
+                        {name:'Kota.jpg',type:'file',app:'gallery',content:'https://picsum.photos/800/600?random=2'}
+                    ]},
+                    {name:'Download',type:'folder',content:[]},
+                    {name:'Readme.txt',type:'file',app:'notepad',content:'Selamat datang di FileSaya!'}
+                ]
+            };
+            
+            let path=[],dir=fs.root;
+            
+            function render(){
+                g.innerHTML='';
+                p.textContent='/'+path.join('/');
+                
+                if(path.length>0){
+                    const b=document.createElement('div');
+                    b.className='explorer-item folder';
+                    b.innerHTML=`<i class="fas fa-arrow-left"></i><span>Kembali</span>`;
+                    b.addEventListener('dblclick',()=>{
+                        path.pop();
+                        navigateToPath(path);
+                    });
+                    g.appendChild(b);
+                }
+                
+                dir.forEach(item=>{
+                    const e=document.createElement('div');
+                    e.className='explorer-item';
+                    let iC,iS;
+                    
+                    if(item.type==='folder'){
+                        iC='fa-folder';
+                        e.classList.add('folder');
+                    } else {
+                        iC='fa-file';
+                        if(item.name.endsWith('.txt')) e.classList.add('text');
+                        else if(item.name.endsWith('.jpg') || item.name.endsWith('.png')) e.classList.add('image');
+                        else if(item.name.endsWith('.mp3')) e.classList.add('music');
+                        else if(item.name.endsWith('.js') || item.name.endsWith('.html')) e.classList.add('code');
+                    }
+                    
+                    e.innerHTML=`<i class="fas ${iC}"></i><span>${item.name}</span>`;
+                    
+                    e.addEventListener('dblclick',()=>{
+                        if(item.type==='folder'){
+                            path.push(item.name);
+                            dir=item.content;
+                            render();
+                        } else if(item.app){
+                            let win;
+                            switch(item.app){
+                                case 'notepad':
+                                    win=createWindow('notepad');
+                                    win.querySelector('textarea').value=item.content;
+                                    break;
+                                case 'word-editor':
+                                    win=createWindow('word-editor');
+                                    win.querySelector('.word-editor-content').innerHTML=item.content;
+                                    break;
+                                case 'music':
+                                    win=createWindow('music');
+                                    win.querySelector('#audio-player').src=item.content;
+                                    win.querySelector('.music-info h4').textContent=item.name;
+                                    win.querySelector('#play-pause-btn').click();
+                                    break;
+                                case 'gallery':
+                                    win=createWindow('gallery');
+                                    win.querySelector('.window-body').innerHTML=`<img src="${item.content}" style="width:100%;height:100%;object-fit:contain;">`;
+                                    break;
+                                case 'code-editor':
+                                    win=createWindow('code-editor');
+                                    win.querySelector('#code-editor').value=item.content;
+                                    break;
+                                default:
+                                    createWindow(item.app);
+                            }
+                        }
+                    });
+                    
+                    // Context menu for files
+                    e.addEventListener('contextmenu', (event) => {
+                        event.preventDefault();
+                        showContextMenu(event.clientX, event.clientY, 'file', item);
+                    });
+                    
+                    g.appendChild(e);
+                });
+            }
+            
+            function navigateToPath(pathArr){
+                let t=fs.root;
+                for(let i=0;i<pathArr.length;i++){
+                    const f=t.find(item=>item.name===pathArr[i]&&item.type==='folder');
+                    if(f) t=f.content;
+                    else { path=[]; t=fs.root; break; }
+                }
+                dir=t;
+                render();
+            }
+            
+            nf.addEventListener('click', () => {
+                const name = prompt('Nama folder baru:');
+                if (name) {
+                    dir.push({name, type:'folder', content:[]});
+                    render();
+                }
+            });
+            
+            df.addEventListener('click', () => {
+                const selected = g.querySelector('.selected');
+                if (selected) {
+                    const name = selected.querySelector('span').textContent;
+                    if (confirm(`Hapus "${name}"?`)) {
+                        const index = dir.findIndex(item => item.name === name);
+                        if (index !== -1) {
+                            dir.splice(index, 1);
+                            render();
+                        }
+                    }
+                }
+            });
+            
+            render();
+        }
+        
+        function initTaskManager(windowEl) {
+            const taskList = windowEl.querySelector('.task-list');
+            const minimizeAllBtn = windowEl.querySelector('#minimize-all-btn');
+            const closeAllBtn = windowEl.querySelector('#close-all-btn');
+            
+            function updateList() {
+                taskList.innerHTML = '';
+                if(openWindows.size === 0) { 
+                    taskList.innerHTML = '<li style="justify-content:center;">Tidak ada aplikasi berjalan.</li>'; 
+                    return; 
+                }
+                
+                openWindows.forEach((info, id) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span>${info.element.querySelector('.window-title').textContent}</span>
+                    <button data-app-id="${id}">Tutup</button>`;
+                    li.querySelector('button').addEventListener('click', (e) => {
+                        closeWindow(openWindows.get(e.target.dataset.appId).element, e.target.dataset.appId);
+                    });
+                    taskList.appendChild(li);
+                });
+            }
+            
+            minimizeAllBtn.addEventListener('click', () => {
+                openWindows.forEach((info, appId) => {
+                    toggleMinimize(info.element, appId);
+                });
+            });
+            
+            closeAllBtn.addEventListener('click', () => {
+                openWindows.forEach((info, appId) => {
+                    closeWindow(info.element, appId);
+                });
+            });
+            
+            const observer = new MutationObserver(updateList);
+            observer.observe(taskbarAppsContainer, { childList: true });
+            windowEl.addEventListener('removed', () => observer.disconnect());
+            updateList();
+        }
+        
+        function initAppStore(windowEl) {
+            const container = windowEl.querySelector('.app-store-grid');
+            container.innerHTML = '';
+            
+            Object.keys(availableApps).forEach(appId => {
+                const app = availableApps[appId];
+                const appEl = document.createElement('div');
+                appEl.className = 'app-store-item';
+                
+                const installed = localStorage.getItem(`app-installed-${appId}`) === 'true';
+                
+                appEl.innerHTML = `
+                    <div class="app-store-icon"><i class="fas ${app.icon}"></i></div>
+                    <div class="app-store-name">${app.name}</div>
+                    <div class="app-store-desc">${app.description}</div>
+                    <button class="app-store-btn ${installed ? 'installed' : ''}" 
+                        data-app-id="${appId}" ${installed ? 'disabled' : ''}>
+                        ${installed ? 'Terinstal' : 'Instal'}
+                    </button>
+                `;
+                
+                if (!installed) {
+                    appEl.querySelector('button').addEventListener('click', (e) => {
+                        const appId = e.target.dataset.appId;
+                        localStorage.setItem(`app-installed-${appId}`, 'true');
+                        e.target.textContent = 'Terinstal';
+                        e.target.disabled = true;
+                        e.target.classList.add('installed');
+                        showNotification(`${app.name} berhasil diinstal!`);
+                    });
+                }
+                
+                container.appendChild(appEl);
+            });
+        }
+        
+        function initSystemMonitor(windowEl) {
+            function update() {
+                const cpu = 30 + Math.floor(Math.random() * 40);
+                const ram = 40 + Math.floor(Math.random() * 40);
+                
+                windowEl.querySelector('#sys-cpu-bar').style.width = `${cpu}%`;
+                windowEl.querySelector('#sys-cpu-value').textContent = `${cpu}%`;
+                
+                windowEl.querySelector('#sys-ram-bar').style.width = `${ram}%`;
+                const ramGB = (ram / 100 * 32).toFixed(1);
+                windowEl.querySelector('#sys-ram-value').textContent = `${ramGB}GB/32GB (${ram}%)`;
+            }
+            
+            update();
+            setInterval(update, 2000);
+        }
+        
+        function initThemeEditor(windowEl) {
+            const primaryInput = windowEl.querySelector('#theme-primary');
+            const bgInput = windowEl.querySelector('#theme-bg');
+            const headerInput = windowEl.querySelector('#theme-header');
+            const applyBtn = windowEl.querySelector('#apply-theme');
+            const saveBtn = windowEl.querySelector('#save-theme');
+            const preview = windowEl.querySelector('.theme-preview');
+            
+            function applyTheme() {
+                const primary = primaryInput.value;
+                const bg = bgInput.value;
+                const header = headerInput.value;
+                
+                document.documentElement.style.setProperty('--accent-color-primary', primary);
+                document.documentElement.style.setProperty('--bg-primary', hexToRgba(bg, 0.6));
+                document.documentElement.style.setProperty('--window-header-bg', hexToRgba(header, 0.8));
+                
+                preview.style.setProperty('--preview-bg1', bg);
+                preview.style.setProperty('--preview-bg2', adjustColor(bg, 20));
+                preview.style.setProperty('--preview-header', header);
+                preview.style.setProperty('--preview-border', adjustColor(header, -10));
+            }
+            
+            applyBtn.addEventListener('click', applyTheme);
+            
+            saveBtn.addEventListener('click', () => {
+                const theme = {
+                    primary: primaryInput.value,
+                    background: bgInput.value,
+                    header: headerInput.value
+                };
+                localStorage.setItem('kynay-os-custom-theme', JSON.stringify(theme));
+                showNotification('Tema berhasil disimpan!');
+            });
+            
+            // Load saved theme if exists
+            const savedTheme = localStorage.getItem('kynay-os-custom-theme');
+            if (savedTheme) {
+                const theme = JSON.parse(savedTheme);
+                primaryInput.value = theme.primary;
+                bgInput.value = theme.background;
+                headerInput.value = theme.header;
+                applyTheme();
+            }
+        }
+        
+        function initCodeEditor(windowEl) {
+            const editor = windowEl.querySelector('#code-editor');
+            const saveBtn = windowEl.querySelector('#save-file-btn');
+            const fileTypeSelect = windowEl.querySelector('#file-type');
+            
+            saveBtn.addEventListener('click', () => {
+                const content = editor.value;
+                const fileType = fileTypeSelect.value;
+                let fileName = prompt("Nama file:");
+                if (fileName) {
+                    if (!fileName.includes('.')) fileName += '.' + fileType;
+                    downloadBlob(content, fileName, 'text/' + fileType);
+                }
+            });
+        }
+        
+        function initScreenshotTool(windowEl) {
+            const preview = windowEl.querySelector('.screenshot-preview');
+            windowEl.querySelector('#capture-full').addEventListener('click', () => {
+                preview.textContent = 'Mengambil tangkapan layar desktop...';
+                showNotification('Tangkapan layar desktop berhasil disimpan!', 'success');
+                setTimeout(() => preview.textContent = 'Pratinjau akan muncul di sini', 1000);
+            });
+            
+            windowEl.querySelector('#capture-window').addEventListener('click', () => {
+                preview.textContent = 'Mengambil tangkapan layar jendela aktif...';
+                showNotification('Tangkapan layar jendela aktif berhasil disimpan!', 'success');
+                setTimeout(() => preview.textContent = 'Pratinjau akan muncul di sini', 1000);
+            });
+            
+            windowEl.querySelector('#capture-area').addEventListener('click', () => {
+                preview.textContent = 'Silakan pilih area...';
+                showNotification('Pilih area untuk tangkapan layar...', 'info');
+                // In real implementation: would show selection UI
+                setTimeout(() => {
+                    showNotification('Area berhasil ditangkap dan disimpan!', 'success');
+                    preview.textContent = 'Pratinjau akan muncul di sini';
+                }, 2000);
+            });
+        }
+        
+        function initNotepad(windowEl) {
+            const saveBtn = windowEl.querySelector('#save-notepad');
+            const textarea = windowEl.querySelector('textarea');
+            
+            saveBtn.addEventListener('click', () => {
+                const content = textarea.value;
+                const fileName = prompt("Nama file:", "catatan.txt");
+                if (fileName) {
+                    downloadBlob(content, fileName, 'text/plain');
+                    showNotification(`File "${fileName}" berhasil disimpan!`, 'success');
+                }
+            });
+        }
+
+        // --- NEW APP LOGIC ---
+        function initMail(windowEl) {
+            const composeBtn = windowEl.querySelector('.mail-compose-btn');
+            composeBtn.addEventListener('click', () => {
+                const writeApp = createWindow('word-editor');
+                writeApp.querySelector('.window-title').textContent = 'Email Baru';
+                writeApp.querySelector('.word-editor-content').innerHTML = `
+                    <p><strong>Kepada:</strong> </p>
+                    <p><strong>Subjek:</strong> </p>
+                    <hr>
+                    <p>Tulis email Anda di sini...</p>
+                `;
+            });
+            windowEl.querySelectorAll('.mail-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    showNotification(`Membuka email: "${item.querySelector('.mail-subject').textContent}"`, 'info');
+                });
+            });
+        }
+
+        function initNotes(windowEl) {
+            const saveBtn = windowEl.querySelector('.notes-save-btn');
+            const textarea = windowEl.querySelector('.notes-textarea');
+            saveBtn.addEventListener('click', () => {
+                if (textarea.value.trim() === '') {
+                    showNotification('Tidak ada yang bisa disimpan!', 'warning');
+                    return;
+                }
+                downloadBlob(textarea.value, 'catatan.txt', 'text/plain');
+                showNotification('Catatan disimpan sebagai catatan.txt', 'success');
+            });
+        }
+
+        function initCalendar(windowEl) {
+            const monthYearEl = windowEl.querySelector('#cal-month-year');
+            const daysEl = windowEl.querySelector('.calendar-days');
+            const prevBtn = windowEl.querySelector('#cal-prev');
+            const nextBtn = windowEl.querySelector('#cal-next');
+
+            let date = new Date();
+            date.setDate(1);
+
+            function renderCalendar() {
+                const month = date.getMonth();
+                const year = date.getFullYear();
+                const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+                monthYearEl.textContent = `${monthNames[month]} ${year}`;
+
+                const firstDayIndex = date.getDay();
+                const lastDay = new Date(year, month + 1, 0).getDate();
+                const prevLastDay = new Date(year, month, 0).getDate();
+                const lastDayIndex = new Date(year, month, lastDay).getDay();
+                const nextDays = 7 - lastDayIndex - 1;
+
+                let days = "";
+
+                for (let x = firstDayIndex; x > 0; x--) {
+                    days += `<div class="other-month">${prevLastDay - x + 1}</div>`;
+                }
+
+                const today = new Date();
+                for (let i = 1; i <= lastDay; i++) {
+                    if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                        days += `<div class="today">${i}</div>`;
+                    } else {
+                        days += `<div>${i}</div>`;
+                    }
+                }
+
+                for (let j = 1; j <= nextDays; j++) {
+                    days += `<div class="other-month">${j}</div>`;
+                }
+                daysEl.innerHTML = days;
+            }
+
+            prevBtn.addEventListener('click', () => {
+                date.setMonth(date.getMonth() - 1);
+                renderCalendar();
+            });
+
+            nextBtn.addEventListener('click', () => {
+                date.setMonth(date.getMonth() + 1);
+                renderCalendar();
+            });
+            renderCalendar();
+        }
+
+        function initPdfViewer(windowEl) {
+            const uploadBtn = windowEl.querySelector('#pdf-upload-btn');
+            const fileInput = windowEl.querySelector('#pdf-file-input');
+            const fileNameEl = windowEl.querySelector('#pdf-filename');
+            const viewerEl = windowEl.querySelector('#pdf-viewer');
+
+            uploadBtn.addEventListener('click', () => fileInput.click());
+
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file && file.type === "application/pdf") {
+                    fileNameEl.textContent = file.name;
+                    const fileURL = URL.createObjectURL(file);
+                    viewerEl.classList.remove('pdf-viewer-placeholder');
+                    viewerEl.innerHTML = `<iframe id="pdf-viewer-iframe" src="${fileURL}"></iframe>`;
+                } else if (file) {
+                    showNotification('Silakan pilih file PDF yang valid.', 'error');
+                    fileNameEl.textContent = 'File tidak valid.';
+                    viewerEl.classList.add('pdf-viewer-placeholder');
+                    viewerEl.innerHTML = `
+                        <i class="fas fa-file-pdf"></i>
+                        <p>Pratinjau PDF akan muncul di sini</p>
+                    `;
+                }
+            });
+        }
+        
+        // --- UTILITY FUNCTIONS ---
+        function downloadBlob(content, fileName, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function hexToRgba(hex, opacity) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+        }
+        
+        function adjustColor(hex, amount) {
+            let r = parseInt(hex.slice(1, 3), 16);
+            let g = parseInt(hex.slice(3, 5), 16);
+            let b = parseInt(hex.slice(5, 7), 16);
+            
+            r = Math.min(255, Math.max(0, r + amount));
+            g = Math.min(255, Math.max(0, g + amount));
+            b = Math.min(255, Math.max(0, b + amount));
+            
+            return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        }
+        
+        // --- CONTEXT MENU SYSTEM ---
+        function showContextMenu(x, y, type, data) {
+            // Close existing context menu
+            if (currentContextMenu) {
+                currentContextMenu.style.display = 'none';
+            }
+            
+            const menu = document.getElementById(`${type}-context-menu`);
+            if (!menu) return;
+            
+            menu.style.left = `${x}px`;
+            menu.style.top = `${y}px`;
+            menu.style.display = 'block';
+            currentContextMenu = menu;
+            
+            // Add event listeners based on context type
+            if (type === 'desktop') {
+                document.getElementById('new-folder').onclick = () => {
+                    createWindow('file-explorer');
+                    menu.style.display = 'none';
+                };
+                document.getElementById('new-file').onclick = () => {
+                    createWindow('notepad');
+                    menu.style.display = 'none';
+                };
+                document.getElementById('refresh-desktop').onclick = () => {
+                    showNotification('Desktop refreshed');
+                    menu.style.display = 'none';
+                };
+                document.getElementById('show-desktop').onclick = () => {
+                    openWindows.forEach((info, appId) => {
+                        toggleMinimize(info.element, appId);
+                    });
+                    menu.style.display = 'none';
+                };
+            } else if (type === 'taskbar') {
+                document.getElementById('task-manager-shortcut').onclick = () => {
+                    createWindow('task-manager');
+                    menu.style.display = 'none';
+                };
+                document.getElementById('close-all').onclick = () => {
+                    openWindows.forEach((info, appId) => {
+                        closeWindow(info.element, appId);
+                    });
+                    menu.style.display = 'none';
+                };
+                document.getElementById('minimize-all').onclick = () => {
+                    openWindows.forEach((info, appId) => {
+                        toggleMinimize(info.element, appId);
+                    });
+                    menu.style.display = 'none';
+                };
+            } else if (type === 'file') {
+                document.getElementById('open-file').onclick = () => {
+                    // Simulate opening file
+                    if (data.app) {
+                        createWindow(data.app);
+                    }
+                    menu.style.display = 'none';
+                };
+                document.getElementById('rename-file').onclick = () => {
+                    const newName = prompt('Nama baru:', data.name);
+                    if (newName) {
+                        showNotification(`Berhasil mengubah nama menjadi "${newName}"`);
+                    }
+                    menu.style.display = 'none';
+                };
+                document.getElementById('delete-file').onclick = () => {
+                    if (confirm(`Hapus "${data.name}"?`)) {
+                        showNotification(`"${data.name}" telah dihapus`);
+                    }
+                    menu.style.display = 'none';
+                };
+            }
+        }
+        
+        // Close context menu when clicking elsewhere
+        document.addEventListener('click', (e) => {
+            if (currentContextMenu && !currentContextMenu.contains(e.target)) {
+                currentContextMenu.style.display = 'none';
+            }
+        });
+        
+        // Desktop context menu
+        desktop.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            showContextMenu(e.clientX, e.clientY, 'desktop');
+        });
+        
+        // --- SYSTEM CONTROLS (in Control Center) & PERSISTENCE ---
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const cloudSyncBtn = document.getElementById('cloud-sync-btn');
+        const systemUpdateBtn = document.getElementById('system-update-btn');
+        
+        themeToggleBtn.addEventListener('click', ()=>{
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            themeToggleBtn.innerHTML = isLight ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('kynay-os-theme', isLight ? 'light' : 'dark');
+        });
+        
+        fullscreenBtn.addEventListener('click', ()=>{
+            if(!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else document.exitFullscreen();
+        });
+        
+        document.querySelectorAll('.wallpaper-btn').forEach(btn => {
+            btn.addEventListener('click', ()=> setWallpaper(btn.dataset.theme));
+        });
+        
+        cloudSyncBtn.addEventListener('click', () => {
+            showNotification('Synchronizing settings to cloud...', 'info');
+            setTimeout(() => {
+                showNotification('Cloud sync completed!', 'success');
+            }, 2000);
+        });
+        
+        systemUpdateBtn.addEventListener('click', () => {
+            showNotification('Checking for updates...', 'info');
+            setTimeout(() => {
+                showNotification('System update available! Downloading...', 'info');
+                
+                // Simulate update progress
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 5;
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        showNotification('System updated successfully! Restart to apply changes.', 'success');
+                    } else {
+                        showNotification(`Downloading update: ${progress}%`, 'info');
+                    }
+                }, 300);
+            }, 1500);
+        });
+        
+        shutdownBtn.addEventListener('click',()=>{
+            if(confirm('Anda yakin ingin mematikan Kynay OS?')){
+                const s=document.createElement('div');
+                Object.assign(s.style,{
+                    position:'fixed',top:0,left:0,width:'100%',height:'100%',
+                    background:'#0d1117',zIndex:10001,display:'flex',
+                    justifyContent:'center',alignItems:'center',color:'white',
+                    opacity:0,transition:'opacity 1s ease'
+                });
+                s.innerHTML=`<h1>Mematikan...</h1>`;
+                document.body.appendChild(s);
+                setTimeout(()=>s.style.opacity='1',10);
+                setTimeout(()=>{
+                    localStorage.removeItem('kynay-os-state');
+                    document.body.innerHTML='<div style="background:#000;color:#fff;width:100%;height:100%;display:flex;justify-content:center;align-items:center;"><h1>Sistem telah dimatikan.</h1></div>';
+                },2500);
+            }
+        });
+        
+        screenshotBtn.addEventListener('click', () => {
+            createWindow('screenshot');
+        });
+        
+        // --- SHORTCUT KEYS ---
+        document.addEventListener('keydown', (e) => {
+            // Win key (Meta key) for start menu
+            if (e.key === 'Meta' || e.key === 'Super') {
+                e.preventDefault();
+                togglePanel(startMenu);
+            }
+            
+            // Alt+Tab for window switching
+            if (e.altKey && e.key === 'Tab') {
+                e.preventDefault();
+                if (openWindows.size > 0) {
+                    const apps = [...openWindows.keys()];
+                    const currentIndex = apps.findIndex(appId => {
+                        const win = openWindows.get(appId).element;
+                        return win.style.display !== 'none';
+                    });
+                    const nextIndex = (currentIndex + 1) % apps.length;
+                    const nextAppId = apps[nextIndex];
+                    const nextWin = openWindows.get(nextAppId).element;
+                    focusWindow(nextWin);
+                }
+            }
+            
+            // Win+D for show desktop
+            if ((e.metaKey || e.ctrlKey) && e.key === 'd') {
+                e.preventDefault();
+                openWindows.forEach((info, appId) => {
+                    toggleMinimize(info.element, appId);
+                });
+            }
+            
+            // F1 for shortcut helper
+            if (e.key === 'F1') {
+                e.preventDefault();
+                const helper = document.getElementById('shortcut-helper');
+                helper.style.display = helper.style.display === 'block' ? 'none' : 'block';
+            }
+            
+            // Win+E for file explorer
+            if ((e.metaKey || e.ctrlKey) && e.key === 'e') {
+                e.preventDefault();
+                createWindow('file-explorer');
+            }
+            
+            // Win+L for lock screen
+            if ((e.metaKey || e.ctrlKey) && e.key === 'l') {
+                e.preventDefault();
+                showNotification('System locked', 'info');
+            }
+            
+            // Win+C for control center
+            if ((e.metaKey || e.ctrlKey) && e.key === 'c') {
+                e.preventDefault();
+                togglePanel(controlCenter);
+            }
+            
+            // Win+S for screenshot
+            if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+                e.preventDefault();
+                createWindow('screenshot');
+            }
+            
+            // Win+W for workspace view
+            if ((e.metaKey || e.ctrlKey) && e.key === 'w') {
+                e.preventDefault();
+                workspaceView.classList.toggle('show');
+            }
+            
+            // Ctrl+Shift+Esc for task manager
+            if (e.ctrlKey && e.shiftKey && e.key === 'Escape') {
+                e.preventDefault();
+                createWindow('task-manager');
+            }
+        });
+        
+        // Close shortcut helper
+        document.querySelector('.shortcut-close').addEventListener('click', () => {
+            shortcutHelper.style.display = 'none';
+        });
+        
+        // --- STATE MANAGEMENT ---
+        function saveState() {
+            const state = {
+                workspace: currentWorkspace,
+                windows: [],
+                theme: localStorage.getItem('kynay-os-theme'),
+                wallpaper: localStorage.getItem('kynay-os-wallpaper'),
+                user: currentUser
+            };
+            
+            openWindows.forEach((info, appId) => {
+                const win = info.element;
+                state.windows.push({
+                    appId: appId,
+                    x: win.style.left,
+                    y: win.style.top,
+                    width: win.style.width,
+                    height: win.style.height,
+                    content: getWindowContent(appId, win),
+                    workspace: info.workspace,
+                    maximized: info.maximized
+                });
+            });
+            
+            localStorage.setItem('kynay-os-state', JSON.stringify(state));
+        }
+        
+        function getWindowContent(appId, windowEl) {
+            switch(appId) {
+                case 'notepad':
+                    return windowEl.querySelector('textarea').value;
+                case 'word-editor':
+                    return windowEl.querySelector('.word-editor-content').innerHTML;
+                case 'spreadsheet':
+                    return windowEl.querySelector('.spreadsheet-table').outerHTML;
+                case 'terminal':
+                    return windowEl.querySelector('.terminal-output').innerHTML;
+                case 'code-editor':
+                    return windowEl.querySelector('#code-editor').value;
+                default:
+                    return '';
+            }
+        }
+        
+        function loadState() {
+            const state = JSON.parse(localStorage.getItem('kynay-os-state'));
+            if (state) {
+                // Apply theme
+                if (state.theme === 'light') {
+                    document.body.classList.add('light-mode');
+                    themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                }
+                
+                // Apply wallpaper
+                if (state.wallpaper) {
+                    setWallpaper(state.wallpaper);
+                }
+                
+                // Set workspace
+                currentWorkspace = state.workspace || 0;
+                switchWorkspace(currentWorkspace);
+                
+                // Open windows
+                state.windows.forEach(winState => {
+                    const win = createWindow(winState.appId, winState.content);
+                    win.style.left = winState.x;
+                    win.style.top = winState.y;
+                    win.style.width = winState.width;
+                    win.style.height = winState.height;
+                    
+                    const winInfo = openWindows.get(winState.appId);
+                    winInfo.workspace = winState.workspace;
+                    winInfo.maximized = winState.maximized;
+                    
+                    if (winState.maximized) {
+                        toggleMaximize(win);
+                    }
+                    
+                    // Move to correct workspace
+                    const currentIndex = workspaces[currentWorkspace].indexOf(winState.appId);
+                    if (currentIndex !== -1) {
+                        workspaces[currentWorkspace].splice(currentIndex, 1);
+                    }
+                    workspaces[winState.workspace].push(winState.appId);
+                });
+            }
+            
+            // Set wallpaper if not set
+            if (!localStorage.getItem('kynay-os-wallpaper')) {
+                setWallpaper('waves');
+            }
+        }
+        
+        // Auto-save state every 30 seconds
+        setInterval(saveState, 30000);
+        
+        // Save state before unload
+        window.addEventListener('beforeunload', saveState);
+        
+        // Load installed apps
+        function loadInstalledApps() {
+            Object.keys(availableApps).forEach(appId => {
+                if (localStorage.getItem(`app-installed-${appId}`) === 'true') {
+                    const app = availableApps[appId];
+                    addAppToStartMenu(appId, app);
+                }
+            });
+        }
+        
+        function addAppToStartMenu(appId, appInfo) {
+            const startMenuItems = document.querySelector('.start-menu-items');
+            const item = document.createElement('div');
+            item.className = 'start-menu-item';
+            item.dataset.app = appId;
+            item.innerHTML = `<i class="fas ${appInfo.icon}"></i><span>${appInfo.name}</span>`;
+            item.addEventListener('click', () => {
+                createWindow(appId);
+                startMenu.classList.remove('show');
+            });
+            startMenuItems.appendChild(item);
+        }
+        
+        loadInstalledApps();
+        
+        // Initialize parallax effect
+        function initParallax() {
+            if (!desktopParallaxEnabled) return;
+            
+            const desktopContent = document.querySelector('.desktop-content');
+            desktopContent.classList.add('parallax-layer');
+            
+            document.addEventListener('mousemove', (e) => {
+                const x = (e.clientX / window.innerWidth) * 2 - 1;
+                const y = (e.clientY / window.innerHeight) * 2 - 1;
+                
+                desktopContent.style.transform = `translate(${x * 10}px, ${y * 10}px)`;
+            });
+        }
+        
+        // Initialize after boot
+        setTimeout(() => {
+            initParallax();
+        }, 2000);
+    });
+    </script>
+</body>
+</html>
